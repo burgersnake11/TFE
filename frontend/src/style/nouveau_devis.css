@@ -1,0 +1,72 @@
+/* Fichier nouveau_devis.css */
+
+/* Styles pour la mise en page en grille */
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Deux colonnes égales */
+    gap: 20px; /* Espacement entre les colonnes */
+    height: 70vh; /* Hauteur maximale de l'écran */
+}
+
+/* Styles pour le formulaire */
+.form_devis {
+    width: 93%; /* Réduire la taille du formulaire à 60% de la largeur */
+    height: 100%; /* Hauteur maximale de l'écran */
+    overflow-y: auto; /* Ajouter une barre de défilement si nécessaire */
+    margin-top: 20px; /* Ajouter une marge supérieure de 20px */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2%;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles pour l'aperçu du devis */
+.apercu_devis {
+    width: 95%; /* Réduire la taille de l'aperçu à 40% de la largeur */
+    height: 105%; /* Hauteur maximale de l'écran */
+    padding: 20px;
+    border: 3px solid black; /* Ajouter une bordure */
+    background-color: #fff; /* Fond blanc */
+    box-sizing: border-box; /* Inclure la bordure dans la taille */
+    box-shadow: 0 0 20px black; /* Ajouter une légère ombre */
+    margin-top: 25px; /* Réduire la marge supérieure à 20px */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 10px;
+}
+
+/* Styles pour la partie supérieure de l'aperçu */
+.apercu_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px; /* Ajouter une marge inférieure de 20px */
+}
+
+/* Styles pour l'adresse du client */
+.client_address {
+    white-space: pre-line; /* Permettre le retour à la ligne dans l'adresse */
+    float: right;
+}
+
+.titre{
+    margin: 20px;
+    text-align: center;
+}
+/* Styles pour le détail des produits */
+.produits_detail {
+    font-size: 20px; /* Augmenter la taille de police */
+    margin-bottom: 20px; /* Ajouter une marge inférieure de 20px */
+    border: 1px solid black; /* Ajouter une fine bordure */
+    padding: 10px; /* Ajouter un espacement interne */
+}
+
+/* Styles pour la signature */
+.signature {
+    align-self: flex-end;
+    font-style: italic;
+}
+

@@ -1,0 +1,13 @@
+.totaux{
+    background-color: #9C5A5E;
+    margin-left: 35%;
+    margin-right: 35%;
+    border-radius: 30px;
+    font-size: 32px;
+    margin-top: 5%;
+    padding: 1%;
+}
+
+.prix{
+    float:right;
+}
