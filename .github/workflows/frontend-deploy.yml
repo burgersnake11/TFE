@@ -1,0 +1,22 @@
+name: Frontend Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: npm ci && npm run build
+
+      - name: Deploy to hosting
+        run: |
+          # Place your deployment commands here
+          # For example, deploying to GitHub Pages or other hosting services
