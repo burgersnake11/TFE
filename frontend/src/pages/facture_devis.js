@@ -33,10 +33,10 @@ const Facture_devis = () => {
     const [devis, setDevis] = useState({})
     const [produits, setProduits] = useState([])
     useEffect(() => {
-      axios.get("http://localhost:3001/facture_numero").then((res) => {
+      axios.get("http://54.37.9.74:3001/facture_numero").then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("http://localhost:3001/devis").then((res) => {
+      axios.get("http://54.37.9.74:3001/devis").then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -66,7 +66,7 @@ const Facture_devis = () => {
     }
     
     function handleClientSelection(selectedClient) {
-        axios.get("http://localhost:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
+        axios.get("http://54.37.9.74:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
             setDevis(res.data)
             setProduits(res.data.produits)
             let prehtva6=0
@@ -107,7 +107,7 @@ const Facture_devis = () => {
             "fk_commande_id": commandeId,
             "date_limite":limitDate,
         }
-        axios.post("http://localhost:3001/nouvelle_facture", jsonToSend).catch(
+        axios.post("http://54.37.9.74:3001/nouvelle_facture", jsonToSend).catch(
                 err => console.warn(err)
         )
         navigate('/historique_factures');
@@ -161,7 +161,7 @@ const Facture_devis = () => {
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://localhost:3001/mail_facture', formData);
+        axios.post('http://54.37.9.74:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }

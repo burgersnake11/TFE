@@ -17,7 +17,7 @@ const Clients = () => {
   }, [searchTerm])
   
   useEffect(() => {
-    axios.get('http://localhost:3001/clients').then((res) => {
+    axios.get('http://54.37.9.74:3001/clients').then((res) => {
       setClients(res.data);
     });
   }, []);

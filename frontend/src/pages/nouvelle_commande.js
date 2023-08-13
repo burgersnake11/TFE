@@ -11,7 +11,7 @@ const NouvelleCommande = () => {
     useEffect(() => {
         let arrayclient=[]
         let singleClient = {}
-        axios.get("http://localhost:3001/clients").then(res => {
+        axios.get("http://54.37.9.74:3001/clients").then(res => {
             for(let i = 0; i<res.data.length;i++ ){
                 singleClient = {
                     "id":res.data[i].pk_client_id,
@@ -43,7 +43,7 @@ const NouvelleCommande = () => {
                 }
             }
             jsonToSend["nom_commande"] = nomCommande
-            axios.post("http://localhost:3001/nouvelle_commande", jsonToSend).catch(
+            axios.post("http://54.37.9.74:3001/nouvelle_commande", jsonToSend).catch(
                 err => console.warn(err)
             )
             navigate('/travaux');

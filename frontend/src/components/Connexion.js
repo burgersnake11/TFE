@@ -20,7 +20,7 @@ const Default = () => {
                 "email":email,
                 "password": hashedPassword
             }
-            axios.post("http://localhost:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
+            axios.post("http://54.37.9.74:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
                 .then(response => {
                     alert("Vous êtes connecté")
                     navigate('/');
@@ -35,7 +35,7 @@ const Default = () => {
         
     }
 /*     function test(){
-        axios.post("http://localhost:3001/test", {"email":"louisguiot11@gmail.com", "password":bcrypt.hashSync("#Rammus201975", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
+        axios.post("http://54.37.9.74:3001/test", {"email":"louisguiot11@gmail.com", "password":bcrypt.hashSync("#Rammus201975", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
             console.log(res)
         })
     } */

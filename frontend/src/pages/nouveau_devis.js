@@ -40,10 +40,10 @@ const NouveauDevis = () => {
     const now = new Date();
     const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
     setDateCreation(formattedDate);
-    axios.get("http://localhost:3001/devis_numero").then((res) => {
+    axios.get("http://54.37.9.74:3001/devis_numero").then((res) => {
       setSelectedDevisNumero(res.data.rows[0].max+1)
     })
-    axios.get("http://localhost:3001/produits").then((res) => {
+    axios.get("http://54.37.9.74:3001/produits").then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({
@@ -54,7 +54,7 @@ const NouveauDevis = () => {
       }
       setProduits(nom_produit);
     });
-    axios.get("http://localhost:3001/commandes").then((res) => {
+    axios.get("http://54.37.9.74:3001/commandes").then((res) => {
       let arrayclient = res.data.map((data) => ({
         id: data.pk_client_id,
         nom_societe: data.nom_societe,
@@ -101,7 +101,7 @@ const NouveauDevis = () => {
       "devis_numero":selectedDevisNumero,
       "produits":selectedProducts
     }
-    axios.post("http://localhost:3001/devis", jsonToSend).catch(
+    axios.post("http://54.37.9.74:3001/devis", jsonToSend).catch(
       err => console.warn(err)
 )
   navigate('/historique_devis');  
@@ -228,7 +228,7 @@ const NouveauDevis = () => {
           formData.append('sujet', subject)
           formData.append('message', message)
           try {
-            axios.post('http://localhost:3001/mail_facture', formData);
+            axios.post('http://54.37.9.74:3001/mail_facture', formData);
           } catch (error) {
             console.error('Erreur lors de l\'envoi du PDF', error);
           }

@@ -31,7 +31,7 @@ const HistoriqueDevis = () => {
   }, [searchTerm, devis]);
     
   useEffect(() => {
-    axios.get('http://localhost:3001/devis').then((res) => {
+    axios.get('http://54.37.9.74:3001/devis').then((res) => {
       setDevis(res.data);
     });
   }, []);
@@ -73,7 +73,7 @@ const HistoriqueDevis = () => {
     setShowConfirmation(true)
   }
   function archiver(){
-      axios.post("http://localhost:3001/archiver_devis", {"id":devisToDeleteId}).catch(
+      axios.post("http://54.37.9.74:3001/archiver_devis", {"id":devisToDeleteId}).catch(
         err => console.warn(err)
     )
     window.location.reload()

@@ -31,10 +31,10 @@ const Historique_factures = () => {
   }, [searchTerm, factures]);
   
   useEffect(() => {
-    axios.get('http://localhost:3001/factures').then((res) => {
+    axios.get('http://54.37.9.74:3001/factures').then((res) => {
       setFactures(res.data.rows);
     });
-    axios.get('http://localhost:3001/montant').then((res) => {
+    axios.get('http://54.37.9.74:3001/montant').then((res) => {
       if(res.data[0].payer===true){
         setPaye(Math.round((Number(res.data[0].htva6) + Number(res.data[0].htva21) + Number(res.data[0].htva6)*0.06 + Number(res.data[0].htva21)*0.21) *100)/100);
         setNonPaye(Math.round((Number(res.data[1].htva6) + Number(res.data[1].htva21) + Number(res.data[1].htva6)*0.06 + Number(res.data[1].htva21)*0.21) *100)/100);
@@ -71,7 +71,7 @@ const Historique_factures = () => {
   };
 
   function setPayer(id){
-    axios.post("http://localhost:3001/payer_facture", {"id":id}).catch(
+    axios.post("http://54.37.9.74:3001/payer_facture", {"id":id}).catch(
         err => console.warn(err)
     )
     window.location.reload()
@@ -96,7 +96,7 @@ const Historique_factures = () => {
     setShowConfirmation(true)
   }
   function archiver(){
-      axios.post("http://localhost:3001/archiver_facture", {"id":factureToDeleteId}).catch(
+      axios.post("http://54.37.9.74:3001/archiver_facture", {"id":factureToDeleteId}).catch(
         err => console.warn(err)
     )
     window.location.reload()

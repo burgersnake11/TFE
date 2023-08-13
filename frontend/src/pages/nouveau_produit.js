@@ -21,7 +21,7 @@ const NouveauProduit = () => {
                 "prix":Number(prix),
                 "TVA":Number(TVA)
             }
-            axios.post("http://localhost:3001/produits", jsonToSend).catch(
+            axios.post("http://54.37.9.74:3001/produits", jsonToSend).catch(
                 err => console.warn(err)
             ) 
             navigate('/produits');
