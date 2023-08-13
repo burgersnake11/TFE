@@ -5,6 +5,7 @@ import {useNavigate } from 'react-router-dom';
 const NouveauProduit = () => {
     const [prix, setPrix] = useState(0)
     const [nom, setNom] = useState("")
+    const [TVA, setTVA] = useState(0)
     const [selectedImage, setSelectedImage] = useState(null);
     const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ const NouveauProduit = () => {
             let jsonToSend = {
                 "nom_produit":nom,
                 "prix":Number(prix),
+                "TVA":Number(TVA)
             }
             axios.post("http://localhost:3001/produits", jsonToSend).catch(
                 err => console.warn(err)
@@ -35,8 +37,15 @@ const NouveauProduit = () => {
             <br></br>
             <label>Nom : </label>
             <br></br>
-            <input type="text"  classname="nom" onChange={(e) => setNom(e.target.value)} required></input>
+            <input style={{width:"35%"}} type="text"  classname="nom" onChange={(e) => setNom(e.target.value)} required></input>
             <br></br>
+            <label>TVA (en pourcentage):</label>
+            <br/>
+            <select onChange={(e) => setTVA(e.target.value)}>
+                <option value={6}>6%</option>
+                <option value={21}>21%</option>
+            </select>
+            <br/>
             <label>Prix : </label>
             <br></br>
             <input type="number" classname="prix" min="0" step="any" onChange={(e) => setPrix(e.target.value)} required></input>

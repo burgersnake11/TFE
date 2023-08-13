@@ -3,104 +3,237 @@ import { useEffect, useState, useRef } from "react";
 import {useLocation } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import Modal from "react-modal";
+import html2pdf from 'html2pdf.js';
 
 const Facture = () => {
     let id = useLocation().state[0]
+    const [showProductModal, setShowProductModal] = useState(false); // Product modal state
+    const [currentPage2, setCurrentPage2] = useState(1);
+    const [searchTerm2, setSearchTerm2] = useState('');
+    const [filteredProduits, setFilteredProduits] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState("");
+    const [selectedQuantity, setSelectedQuantity] = useState(1);
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [produits, setProduits] = useState([]);
+    const facturesPerPage = 5; // Nombre de factures à afficher par page
+    const [limitDate,setLimitDate] = useState(1);
+    const [showMailModal, setShowMailModal] = useState(false);
+    const [subject, setSubject] = useState("Facture");
+    const [message, setMessage] = useState("Madame, Monsieur,\r\nVeuillez trouver en pièce jointe votre facture / note de crédit.\r\nBien cordialement,\r\nStudio éventail.");
 
     const [numeroFacture, setNumeroFacture] = useState("")
     const [descriptif, setDescriptif] = useState("")
-    const [HTVA6, setHTVA6] = useState("")
-    const [HTVA21, setHTVA21] = useState("")
-    const [TVA6, setTVA6] = useState("")
-    const [TVA21, setTVA21] = useState("")
+    const [HTVA6, setHTVA6] = useState(0)
+    const [HTVA21, setHTVA21] = useState(0)
+    const [TVA6, setTVA6] = useState(0)
+    const [TVA21, setTVA21] = useState(0)
     const [HTVATotal, setHTVATotal] = useState(0)
     const [total, setTotal] = useState(0)
     const [TVATotal, setTVATotal] = useState(0)
     const [selectedClient, setSelectedClient] = useState(null);
     const [selectedAdresseClient, setSelectedAdresseClient] = useState("");
     const navigate = useNavigate();
+    const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
 
 
     useEffect(() => {
         axios.get("http://localhost:3001/facture", {params : {"id":id}}).then(res => {
-            setSelectedClient(res.data.rows[0])
-            setNumeroFacture(res.data.rows[0].facture_numero)
-            setSelectedAdresseClient(res.data.rows[0].pays + " " + res.data.rows[0].numero + " " + res.data.rows[0].rue + " " + res.data.rows[0].code_postal + " " + res.data.rows[0].nom)
-            setHTVA6(Number(res.data.rows[0].htva6))
-            setHTVA21(Number(res.data.rows[0].htva21))
-            setTVA6(Number(res.data.rows[0].htva6) * 0.06)
-            setTVA21(Number(res.data.rows[0].htva21) * 0.21)
-            setHTVATotal(Number(res.data.rows[0].htva6) + Number(res.data.rows[0].htva21))
-            setTVATotal(Number(res.data.rows[0].htva6) * 0.06 + Number(res.data.rows[0].htva21) * 0.21)
-            setTotal(Number(res.data.rows[0].htva6) + Number(res.data.rows[0].htva21) + Number(res.data.rows[0].htva6) * 0.06 + Number(res.data.rows[0].htva21) * 0.21)
-        })
+          console.log(res.data)
+            setSelectedClient(res.data)
+            setNumeroFacture(res.data.facture_numero)
+            setSelectedAdresseClient(res.data.pays + " " + res.data.numero + " " + res.data.rue + " " + res.data.code_postal + " " + res.data.nom)
+            setHTVA6(res.data.htva6 ? Number(res.data.htva6) : 0)
+            setHTVA21(res.data.htva21 ? Number(res.data.htva21) : 0)
+            setTVA6(res.data.htva6 ? Math.round((Number(res.data.htva6) * 0.06)*100)/100 : 0)
+            setTVA21(res.data.htva21 ? Math.round((Number(res.data.htva21) * 0.21)*100)/100 : 0)
+            setLimitDate(res.data.date_limite)
+            if(res.data.htva6){
+              if(res.data.htva21){
+                setHTVATotal(Number(res.data.htva6) + Number(res.data.htva21))
+                setTVATotal(Math.round((Number(res.data.htva6) * 0.06 + Number(res.data.htva21) * 0.21)*100)/100)
+                setTotal(Math.round((Number(res.data.htva6) + Number(res.data.htva21) + Number(res.data.htva6) * 0.06 + Number(res.data.htva21) * 0.21)*100)/100)
+              }
+              else{
+                setHTVATotal(Number(res.data.htva6) + Number(res.data.htva21))
+                setTVATotal(Math.round((Number(res.data.htva6) * 0.06)*100)/100)
+                setTotal(Math.round((Number(res.data.htva6) + Number(res.data.htva6) * 0.06)*100)/100)
+              }
+            }
+            else{
+              setHTVATotal(Number(res.data.htva21))
+              setTVATotal(Math.round(Number(res.data.htva21) * 0.21*100)/100)
+              setTotal(Math.round((Number(res.data.htva21) + Number(res.data.htva21) * 0.21)*100)/100)
+            }
+            
+            setDataLoaded(true); // Marquer les données comme chargées
+            setSelectedProducts(res.data.produits)
+          })
+        axios.get("http://localhost:3001/produits").then((res) => {
+          let nom_produit = [];
+          for (let i = 0; i < res.data.length; i += 1) {
+            nom_produit.push({
+              "nom" :res.data[i]["nom_produit"],
+              "prix" : res.data[i]["prix"],
+              "id":res.data[i]["pk_produits_id"],
+            });
+          }
+          setProduits(nom_produit);
+        });
     }, [])
 
-    function changeValue(e, id){
-        e=Number(e)
-        if (id === 'HTVA6'){
-            setHTVA6(Math.round(e*100)/100)
-            setTVA6(Math.round(e*0.6*100)/100)
-        }
-        if (id === 'TVA6'){
-            setTVA6(Math.round(e*100)/100)
-            setHTVA6(Math.round(e/1.06*100)/100)
-        }
-        if (id=== 'HTVA21'){
-            setHTVA21(Math.round(e*100)/100)
-            setTVA21(Math.round(e*0.21*100)/100)
-        }
-        if (id === 'TVA21'){
-            setTVA21(Math.round(e*100)/100)
-            setHTVA21(Math.round(e/1.21*100)/100)
-        }
-        
-        setHTVATotal(Math.round((Number(HTVA21) +Number(HTVA6))*100)/100)
-        setTVATotal(Math.round((Number(TVA6) + Number(TVA21))*100)/100)
-        setTotal(Math.round((Number(HTVA21) + Number(HTVA6) + Number(TVA21) + Number(TVA6))*100)/100)
+    function openProductModal() {
+      setSearchTerm2("")
+      setCurrentPage2(1)
+      setShowProductModal(true);
     }
+  
+    function closeProductModal() {
+      setShowProductModal(false);
+    }
+    function handleProductSelection() {
+      setSelectedProducts((prevSelectedProducts) => [
+        ...prevSelectedProducts,
+        {
+          product: selectedProduct.nom,
+          quantity: selectedQuantity,
+          tva: selectedProduct.tva,
+          price: selectedProduct.prix || 0,
+          id: selectedProduct.id || 0,
+        },
+      ]);
+      if(selectedProduct.tva===6){
+        setTVA6(Math.round((TVA6 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
+        setHTVA6(Math.round((HTVA6 + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)
+      }
+      else{
+        setTVA21(Math.round((TVA21 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
+        setHTVA21(Math.round((HTVA21 +selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)  
+      }
+      setHTVATotal(Math.round((HTVATotal + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva))*100)/100)
+      setTVATotal(Math.round((TVATotal + selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
+      setTotal(Math.round((total + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva) +  selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
+      setSelectedProduct("");
+      setSelectedQuantity(1);
+      closeProductModal();
+    }
+
+    useEffect(()=>{
+      setCurrentPage2(1)
+    }, [searchTerm2])
+    
+    const applySearchFilter2 = () => {
+      const filtered = produits.filter(Produit => 
+        Produit.nom.toLowerCase().includes(searchTerm2.toLowerCase())
+      );
+      setFilteredProduits(filtered);
+    };
+    
+    useEffect(() => {
+      applySearchFilter2();
+    }, [searchTerm2, produits]);
+
+    const totalPages2 = Math.ceil(filteredProduits.length / facturesPerPage);
+
+    // Fonction pour afficher la première page
+    const goToFirstPage2 = () => setCurrentPage2(1);
+  
+    // Fonction pour afficher la dernière page
+    const goToLastPage2 = () => setCurrentPage2(totalPages2);
+  
+    // Fonction pour afficher la page précédente
+    const goToPreviousPage2 = () => {
+      if (currentPage2 > 1) {
+        setCurrentPage2(currentPage2 - 1);
+      }
+    };
+  
+    // Fonction pour afficher la page suivante
+    const goToNextPage2 = () => {
+      if (currentPage2 < totalPages2) {
+        setCurrentPage2(currentPage2 + 1);
+      }
+    };
 
     function changeFacture(){
         let jsonToSend = { 
             "id" : numeroFacture,
             "HTVA6": HTVA6,
             "HTVA21": HTVA21,
-            "descriptif": descriptif 
+            "descriptif": descriptif,
+            "produits": selectedProducts,
+            "date":limitDate,
         }
         axios.post("http://localhost:3001/facture", jsonToSend).catch(
             err => console.warn(err)
         )
         navigate("/historique_factures")
     }
-    function changeValue(e, id){
-        e=Number(e)
-        if (id === 'HTVA6'){
-            if(e!==0){
-                setHTVA6(Math.round(e*100)/100)
-                setTVA6(Math.round(e*0.06*100)/100)
-            }
-            else{
-                setHTVA6(0)
-                setTVA6(0)
-            }
-            setHTVATotal(Math.round((Number(HTVA21) +e)*100)/100)
-            setTVATotal(Math.round((Math.round(e*0.06*100)/100 + Number(TVA21))*100)/100)
-            setTotal(Math.round((Number(HTVA21) + Math.round(e*100)/100 + Number(TVA21) + Math.round(e*0.06*100)/100)*100)/100)
-        }           
-        if (id=== 'HTVA21'){
-            if(e!==0){
-                setHTVA21(Math.round(e*100)/100)
-                setTVA21(Math.round(e*0.21*100)/100)
-            }
-            else{
-                setHTVA21("")
-                setTVA21("")
-            }
-            setHTVATotal(Math.round((e +Number(HTVA6))*100)/100)
-            setTVATotal(Math.round((Math.round(e*0.21*100)/100 + Number(TVA6))*100)/100)
-            setTotal(Math.round((Math.round(e*100)/100 + Number(HTVA6) + Math.round(e*0.21*100)/100 + Number(TVA6))*100)/100)
-        }
+    function calculateTotalPrice() {
+      return selectedProducts.reduce((total, product) => {
+        const productPrice = parseFloat(product.price) || 0;
+        const productQuantity = parseFloat(product.quantity) || 0;
+        return Math.round((total + productPrice * productQuantity)*100)/100;
+      }, 0);
     }
+
+    const indexOfLastProduit = currentPage2 * facturesPerPage;
+    const indexOfFirstProduit = indexOfLastProduit - facturesPerPage;
+    const currentProduits = filteredProduits.slice(indexOfFirstProduit, indexOfLastProduit);  
+
+    function formatteDate(date){
+      const now = new Date(date)
+      const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`
+      return formattedDate
+    }
+    function openMailModal(e) {
+      e.preventDefault()
+      setShowMailModal(true);
+    }
+  
+    function closeMailModal() {
+      setShowMailModal(false);
+    }
+    const sendPDFToBackend = async (pdfBlob) => {
+/*       const blobUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'apercu.pdf'; // Nom du fichier PDF
+      link.click();
+      URL.revokeObjectURL(blobUrl); */
+
+      const formData = new FormData();
+      formData.append('pdf', pdfBlob, 'apercu.pdf');
+      formData.append('email', selectedClient.email)
+      formData.append('sujet', subject)
+      formData.append('message', message)
+      try {
+        axios.post('http://localhost:3001/mail_facture', formData);
+      } catch (error) {
+        console.error('Erreur lors de l\'envoi du PDF', error);
+      }
+    };
+
+    const generatePDF = async () => {
+      const element = document.getElementById('apercu_devis');
+      const pdfOptions = {
+        margin: 10,
+        filename: 'apercu.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      };
+    
+      const pdfBlob = await html2pdf().from(element).set(pdfOptions).output('blob'); // Utilisation de la méthode 'blob' pour obtenir un Blob
+    
+      // Maintenant, vous pouvez procéder à l'envoi du PDF au backend via Axios
+      sendPDFToBackend(pdfBlob);
+    };
+    const handleGenerateAndSend = async () => {
+      const pdfBlob = await generatePDF();
+      closeMailModal()
+      sendPDFToBackend(pdfBlob);
+    };
           return(
           <div className="container">
             <form className="form_facture secondColor light" onSubmit={changeFacture}>
@@ -118,85 +251,218 @@ const Facture = () => {
                 </span>
               </div>
       
-              <label>Descriptif :</label>
-              <textarea defaultValue={descriptif} onChange={(e) => setDescriptif(e.target.value)} />
-      
-              <div className="montants-container">
-                <div className="montants">
-                  <label>Montants</label>
-      
-                  <div className="montant-row">
-                    <label>HTVA :
-                    <input type="number" min="0" step="any" required onChange={(e) => changeValue(e.target.value, e.target.id)} id="HTVA6"  defaultValue={HTVA6} /></label>
-                    <label> 6% : {TVA6}€ </label>
-                  </div>
-      
-                  <div className="montant-row">
-                    <label>HTVA : 
-                    <input type="number" min="0" step="any" required onChange={(e) => changeValue(e.target.value, e.target.id)} id="HTVA21" defaultValue={HTVA21} /></label>
-                    <label> 21% : {TVA21}€</label>
-                  </div>
-      
-                  <div className="montant-row light">
-                    <label>HTVA total :</label>
-                    <label>{HTVATotal}</label>
-                    <label>TVA total :</label>
-                    <label>{TVATotal}</label>
-                  </div>
-      
-                  <label>Montant à payer : {total}</label>
-                </div>
+              {/* <label>Descriptif :</label>
+              <textarea defaultValue={descriptif} onChange={(e) => setDescriptif(e.target.value)} /> */}
+              <h3>Détails des produits : </h3>
+              <div>
+                  <table className="table" style={{border:"3px solid white"}}>
+                      <thead>
+                          <th>Nom</th>
+                          <th>Prix</th>
+                          <th>TVA</th>
+                          <th>Quantité</th>
+                      </thead>
+                      {selectedProducts.map((i, index) => (
+                          <tr key={index}>
+                              <td>{i.product}</td>
+                              <td>{i.price}</td>
+                              <td>{i.tva}</td>
+                              <td>{i.quantity}</td>
+                          </tr>
+                      ))}
+                  </table>
               </div>
-      
+                <button className="bouton light" type="button" onClick={openProductModal}>Ajouter un produit</button>
+               <Modal
+                isOpen={showProductModal}
+                onRequestClose={closeProductModal}
+                style={{
+                  overlay: {
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      zIndex: 1000,
+                  },
+                  content: {
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "50%",
+                      padding: "20px",
+                      borderRadius: "4px",
+                      height: "50%"
+                  },
+              }}
+                contentLabel="Product Modal"
+              >
+                <h2>Choisir un produit et une quantité</h2>
+                <input
+                type="text"
+                placeholder="Rechercher"
+                value={searchTerm2}
+                onChange={(e) => setSearchTerm2(e.target.value)}
+              />
+                <table>
+                  <thead>
+                    <th>Nom du produit</th>
+                    <th>Prix</th>
+                    <th>Action</th>
+                  </thead>
+                  <tbody>
+                  {currentProduits.map((i, index) => (
+                              <tr key={index}>
+                                  <td>{i.nom}</td>
+                                  <td>{i.prix}</td>
+                                  <td>
+                                      <button
+                                          className="bouton light" 
+                                          type="button"
+                                          onClick={() => setSelectedProduct(i)}
+                                      >
+                                          Sélectionner
+                                      </button>
+                                  </td>
+                              </tr>
+                          ))}
+                  </tbody>
+                </table>
+                <div className='pagination'>
+                  <button className="bouton light" onClick={goToFirstPage2}>Première page</button>
+                  <button className="bouton light" onClick={goToPreviousPage2}>Page précédente</button>
+                  <span>Page {currentPage2} sur {totalPages2}</span>
+                  <button className="bouton light" onClick={goToNextPage2}>Page suivante</button>
+                  <button className="bouton light" onClick={goToLastPage2}>Dernière page</button>
+                </div>
+                <div>
+                  <label>Produit choisi : {selectedProduct.nom}</label>
+                  <br/>
+                  <label>Quantité : </label>
+                  <input
+                    type="number"
+                    min="0.1"
+                    step="0.1"
+                    value={selectedQuantity}
+                    onChange={(e) => setSelectedQuantity(e.target.value)}
+                  />
+                </div>
+                <button className="bouton light" onClick={handleProductSelection}>Valider</button>
+              </Modal>
+              <label>
+                Date limite de paiement :<input type="date" value={dataLoaded ? limitDate.split("T")[0] : ""} onChange={(e) => setLimitDate(e.target.value)} required></input>
+              </label>
+              <label>
+                Date de paiement : {dataLoaded ? selectedClient.payer ? selectedClient.date_paiement ? formatteDate(selectedClient.date_paiement) : "Pas encore payé" : "Pas encore payé" :""}
+              </label>
+              <div className="montants-container mainColor">
+                  <h3>Montants :</h3>
+                  <div className="montant-row">
+                    <label>HTVA (6%) : {HTVA6}€</label>
+                    <label>TVA (6%) : {TVA6}€</label>
+                  </div>
+                  <div className="montant-row">
+                    <label>HTVA (21%) : {HTVA21}€</label>
+                    <label>TVA (21%) : {TVA21}€</label>
+                  </div>
+                  <div className="montant-row">
+                    <label>HTVA Total : {HTVATotal}€</label>
+                    <label>TVA Total : {TVATotal}€</label>
+                  </div>
+                  <div className="apercu_montant_item">
+                    <label>Montant à payer : {total}€</label>
+                  </div>
+              </div>
+              <Modal
+                isOpen={showMailModal}
+                onRequestClose={closeMailModal}
+                style={{
+                  overlay: {
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    zIndex: 1000,
+                  },
+                  content: {
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "50%",
+                    padding: "20px",
+                    borderRadius: "4px",
+                    height: "50%",
+                  },
+                }}
+                contentLabel="modifier_mail"
+              >
+                <div>
+                  {selectedClient && (
+                    <div>
+                      <h2>Mail à {selectedClient.email}</h2>
+                      <label>Objet :</label>
+                      <input
+                        type="text"
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                      />
+                      <br />
+                      <label>Contenu :</label>
+                      <textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                      />
+                      <br />
+                      <button className="bouton light" onClick={handleGenerateAndSend}>
+                        Envoyer le mail
+                      </button>
+                      <button className="bouton light" onClick={closeMailModal}>
+                        Annuler
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </Modal>
+
+                <button className="bouton light" onClick={openMailModal}>Envoyer la facture par mail</button>
               <button className="bouton light" type="submit">Valider</button>
             </form>
-              <div className="apercu_devis">
+              <div className="apercu_devis" id="apercu_devis">
               <div className="apercu_header">
                 <div className="apercu_header_left">
-                  <p>Date : {new Date().toLocaleDateString()}</p>
-                  <h2>Facture numéro {numeroFacture}</h2>
+                  <p>Date : {new Date().toLocaleDateString()}
+                  <div className="apercu_address">
+                    Adresse : 
+                    {selectedAdresseClient}
+                  </div>
+                  </p>
+                  <h1 className="titre">
+                      Devis numéro 00{dataLoaded ? selectedClient.facture_numero : ""}/{dataLoaded ? selectedClient.annee : ""} pour le client {selectedClient ? selectedClient.nom_societe : ""}
+                  </h1>
                 </div>
-                <div className="apercu_header_right">
-                {selectedClient && (
-                <div>
-                  <span>Client choisi: {selectedClient.nom_societe}</span>
-                </div>
-              )}
-                </div>
-              </div>
-              <div className="apercu_address">
-                Adresse : 
-                {selectedAdresseClient}
               </div>
               <div className="apercu_descriptif">
                 <p>Descriptif :</p>
-                <div>{descriptif}</div>
+                <ul>
+                  {selectedProducts.map((product, index) => (
+                    <li key={index}>
+                      Produit: {product.product}, Quantité: {product.quantity}, Prix: {Math.round(product.price*100)/100} €
+                    </li>
+                  ))}
+                  <li>Total: {calculateTotalPrice()} €</li>
+                </ul>
               </div>
               <div className="montants-container">
                 <h3>Montants :</h3>
                 <div className="montant-row">
-                  <p>HTVA (6%) :</p>
-                  <div>{HTVA6}</div>
-                  <p>TVA (6%) :</p>
-                  <div>{TVA6}</div>
+                <label>HTVA (6%) : {HTVA6}€</label>
+                <label>TVA (6%) : {TVA6}€</label>
                 </div>
                 <div className="montant-row">
-                  <p>HTVA (21%) :</p>
-                  <div>{HTVA21}</div>
-                  <p>TVA (21%) :</p>
-                  <div>{TVA21}</div>
+                <label>HTVA (21%) : {HTVA21}€</label>
+                <label>TVA (21%) : {TVA21}€</label>
                 </div>
                 <div className="montant-row">
-                  <p>HTVA Total :</p>
-                  <div>{HTVATotal}</div>
-                  <p>TVA Total :</p>
-                  <div>{TVATotal}</div>
+                <label>HTVA Total : {HTVATotal}€</label>
+                <label>TVA Total : {TVATotal}€</label>
                 </div>
                 <div className="apercu_montant_item">
-                  <p>Montant à payer :</p>
-                  <div>{total}</div>
+                <label>Montant à payer : {total}€</label>
                 </div>
-              </div>
+            </div>
               <div className="apercu_signature">
                 Signature : ____________________________________________
               </div>

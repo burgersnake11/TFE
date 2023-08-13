@@ -97,6 +97,7 @@ const TodoList = () => {
         date: subTask.date,
       })),
     }));
+    console.log(tasksToSave)
     // Stocker l'objet dans le stockage local (localStorage)
     axios.post('http://localhost:3001/todo', {"taches": tasksToSave, "commande_id":commandNumber, "taches_secondaire_id":taches_secondaires_id, "taches_principales_id":taches_principales_id}).catch((err) => {
       console.warn(err);
@@ -112,7 +113,7 @@ const TodoList = () => {
 
   return (
     <div className="todo-list dark">
-      <h2>To Do List pour la commande "{nom_commande}" pour le client "{client}"</h2>
+      <h2>To Do List pour le travail "{nom_commande}" pour le client "{client}"</h2>
       <button className="button-todo bouton light" onClick={handleAddTask}>Ajouter une tâche</button>
       <div className="tasks-container">
         {tasks.map((task, taskIndex) => (
@@ -129,7 +130,7 @@ const TodoList = () => {
                 value={task.title}
                 onChange={(e) => handleUpdateTaskTitle(taskIndex, e.target.value)}
               />
-              <input type="date" value={task.date ? new Date(task.date).toISOString().split('T')[0] : ''} onChange={(e) => handleUpdateTaskDate(taskIndex, e.target.value)}></input>
+              <input type="date" value={task.date} onChange={(e) => handleUpdateTaskDate(taskIndex, e.target.value)}></input>
               <button className="button-todo bouton light" onClick={() => handleDeleteTask(taskIndex)}>Supprimer la tâche</button>
             </div>
             <div className="sub-tasks">
@@ -147,7 +148,7 @@ const TodoList = () => {
                     value={subTask.text}
                     onChange={(e) => handleUpdateSubTask(taskIndex, subTaskIndex, e.target.value)}
                   />
-                  <input type="date" value={subTask.date ? new Date(subTask.date).toISOString().split('T')[0] : ''} onChange={(e) => handleUpdateSubTaskDate(taskIndex, subTaskIndex, e.target.value)}></input>
+                  <input type="date" value={subTask.date ? subTask.date : ''} onChange={(e) => handleUpdateSubTaskDate(taskIndex, subTaskIndex, e.target.value)}></input>
                   <button className="button-todo bouton light" onClick={() => handleDeleteSubTask(taskIndex, subTaskIndex)}>Supprimer la sous tâche</button>
                 </div>
               ))}

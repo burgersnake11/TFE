@@ -11,7 +11,10 @@ const HistoriqueDevis = () => {
   const [devisToDeleteId, setDevisToDeleteId] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredDevis, setFilteredDevis] = useState([]);
-
+  useEffect(()=>{
+    setCurrentPage(1)
+  }, [searchTerm])
+  
   function navigate_to_detail_devis(id) {
         navigate('/detail_devis', { state: [id] });
   }
@@ -83,30 +86,30 @@ const HistoriqueDevis = () => {
       </button>
       <input
         type="text"
-        placeholder="Rechercher par société, client ou nom du travail..."
+        placeholder="Rechercher un devis"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <table className="table light secondColor">
         <thead>
           <tr>
-            <th className="header">Société</th>
-            <th className="header">Client</th>
-            <th className="header">Numéro de devis</th>
+            <th className="petit">Numéro de devis</th>
+            <th className="grand">Société</th>
+            <th className="grand">Client</th>
 {/*             <th className="header">Description</th>
             <th className="version">Version</th> */}
-            <th className="header">Numéro du travail</th>
-            <th className='header'>Nom du travail</th>
-            <th className="header">Détail</th>
-            <th className='header'>Archiver</th>
+            <th className="petit">Numéro du travail</th>
+            <th className='grand'>Nom du travail</th>
+            <th className="moyen">Détail</th>
+            <th className='moyen'>Archiver</th>
           </tr>
         </thead>
         <tbody>
           {currentDevis.map((i, index) => (
             <tr key={index} className="item_facture">
+              <td>{i["devis_numero"]}</td>
               <td>{i["nom_societe"]}</td>
               <td>{i["nom"]}</td>
-              <td>{i["devis_numero"]}</td>
 {/*               <td>{i["description"]}</td>
               <td>{i["version"]}</td>
  */}              <td>{i["fk_commande_id"]}</td>

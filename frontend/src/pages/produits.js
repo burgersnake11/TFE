@@ -13,6 +13,10 @@ function Produits() {
     navigate('/nouveau_produit');
   }
 
+  useEffect(()=>{
+    setCurrentPage(1)
+  }, [searchTerm])
+  
   function navigate_to_modifier_produit(id){
     navigate('/detail_produit', { state: [id] })
   }
@@ -75,6 +79,7 @@ function Produits() {
           <tr>
             <th className="header">Produits</th>
             <th className="header">Prix</th>
+            <th className='header'>TVA</th>
             <th></th>
           </tr>
         </thead>
@@ -83,6 +88,7 @@ function Produits() {
             <tr key={index} className="item_facture">
               <td>{i["nom_produit"]}</td>
               <td>{i["prix"]}</td>
+              <td>{i["tva"]}</td>
               <td><button className="bouton light" onClick={() => navigate_to_modifier_produit(i["pk_produits_id"])}>Détails</button></td>
             </tr>
           ))}

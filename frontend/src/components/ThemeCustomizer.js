@@ -162,9 +162,21 @@ const ThemeCustomizer = () => {
         
         return darkenedHex;
     }
+
+    function setDefault(){
+        changeValue("#764548", "buttonColor")
+        changeValue("#D9D9D9", "mainColor")
+        changeValue("Arial, sans-serif","mainFont")
+        changeValue("black", "fontLightColor")
+        changeValue("#D9D9D9", "fontDarkColor")
+        changeValue("#764548", "firstColor")
+        changeValue("#9C5A5E", "secondColor")
+    }
     return (
         <div>
             <h3>Personnaliser le thème</h3>
+            <button className="bouton light" onClick={setDefault}>Thème par défault</button>
+            <br/>
             <label>Couleur des boutons:</label>
             <input
                 id="buttonColor"

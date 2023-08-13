@@ -87,7 +87,13 @@ const Agenda = () => {
     // Effectuer une nouvelle requête axios avec le mois précédent
     const prevMonthNumber = String(currentDate.getMonth()).padStart(2, "0"); // Obtenir le numéro du mois précédent en deux chiffres
     axios.get("http://localhost:3001/agenda", { params: { mois: prevMonthNumber } }).then((res) => {
-      setActivities(res.data);
+      let taches = res.data;
+      axios.get("http://localhost:3001/taches", { params: { mois: prevMonthNumber } }).then((res2) => {
+        res2.data.forEach((tache)=>{
+          taches.push(tache)
+        })
+        setActivities(taches);
+      });
     });
   };
 
@@ -105,7 +111,13 @@ const Agenda = () => {
     // Effectuer une nouvelle requête axios avec le mois suivant
     const nextMonthNumber = String(currentDate.getMonth() + 2).padStart(2, "0"); // Obtenir le numéro du mois suivant en deux chiffres
     axios.get("http://localhost:3001/agenda", { params: { mois: nextMonthNumber } }).then((res) => {
-      setActivities(res.data);
+      let taches = res.data;
+      axios.get("http://localhost:3001/taches", { params: { mois: nextMonthNumber } }).then((res2) => {
+        res2.data.forEach((tache)=>{
+          taches.push(tache)
+        })
+        setActivities(taches);
+      });
     });
   };
 

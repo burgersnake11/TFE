@@ -3,6 +3,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import "../style/nouveau_devis.css";
 import {useNavigate } from 'react-router-dom';
+import html2pdf from 'html2pdf.js';
 
 const NouveauDevis = () => {
   const [produits, setProduits] = useState([]);
@@ -10,9 +11,9 @@ const NouveauDevis = () => {
   const [showProductModal, setShowProductModal] = useState(false); // Product modal state
   const [showClientModal, setShowClientModal] = useState(false); // Client modal state
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedQuantity, setSelectedQuantity] = useState(0);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState(undefined);
   const [selectedDevisNumero, setSelectedDevisNumero] = useState(0);
   const [selectedAdresseClient, setSelectedAdresseClient] = useState("");
   const [dateCreation, setDateCreation] = useState("");
@@ -24,7 +25,17 @@ const NouveauDevis = () => {
   const [searchTerm2, setSearchTerm2] = useState('');
   const [filteredCommandes, setFilteredCommandes] = useState([]);
   const [filteredProduits, setFilteredProduits] = useState([]);
+  const [showMailModal, setShowMailModal] = useState(false);
+  const [subject, setSubject] = useState("Devis");
+  const [message, setMessage] = useState("Madame, Monsieur,\r\nVeuillez trouver en pièce jointe votre devis.\r\nBien cordialement,\r\nStudio éventail.");
 
+  useEffect(()=>{
+    setCurrentPage(1)
+  }, [searchTerm])
+  useEffect(()=>{
+    setCurrentPage2(1)
+  }, [searchTerm2])
+  
   useEffect(() => {
     const now = new Date();
     const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
@@ -56,6 +67,7 @@ const NouveauDevis = () => {
         nom_commande:data.nom_commande,
         description:data.description,
         pk_commande_id:data.pk_commande_id,
+        email:data.email,
       }));
       setClient(arrayclient);
     });
@@ -125,12 +137,12 @@ const NouveauDevis = () => {
       },
     ]);
     setSelectedProduct("");
-    setSelectedQuantity(0);
+    setSelectedQuantity(1);
     closeProductModal();
   }
 
   function handleClientSelection(selectedClient) {
-    console.log(selectedClient)
+    setSubject("Devis - " + selectedClient.nom_commande)
     setSelectedClient(selectedClient);
     setSelectedAdresseClient(
       `${selectedClient.rue} ${selectedClient.numero}, ${selectedClient.code_postal} ${selectedClient.nom_commune}, ${selectedClient.pays}`
@@ -191,8 +203,8 @@ const NouveauDevis = () => {
   function calculateTotalPrice() {
     return selectedProducts.reduce((total, product) => {
       const productPrice = parseFloat(product.price) || 0;
-      const productQuantity = parseInt(product.quantity) || 0;
-      return total + productPrice * productQuantity;
+      const productQuantity = parseFloat(product.quantity) || 0;
+      return Math.round((total + productPrice * productQuantity)*100)/100;
     }, 0);
   }
   
@@ -201,6 +213,57 @@ const NouveauDevis = () => {
     setSelectedProducts(array)
     e.preventDefault()
   }
+
+  const sendPDFToBackend = async (pdfBlob) => {
+    /*       const blobUrl = URL.createObjectURL(pdfBlob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'apercu.pdf'; // Nom du fichier PDF
+          link.click();
+          URL.revokeObjectURL(blobUrl); */
+    
+          const formData = new FormData();
+          formData.append('pdf', pdfBlob, 'apercu.pdf');
+          formData.append('email', selectedClient.email)
+          formData.append('sujet', subject)
+          formData.append('message', message)
+          try {
+            axios.post('http://localhost:3001/mail_facture', formData);
+          } catch (error) {
+            console.error('Erreur lors de l\'envoi du PDF', error);
+          }
+        };
+    
+        const generatePDF = async () => {
+          const element = document.getElementById('apercu_devis');
+          const pdfOptions = {
+            margin: 10,
+            filename: 'apercu.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          };
+        
+          const pdfBlob = await html2pdf().from(element).set(pdfOptions).output('blob'); // Utilisation de la méthode 'blob' pour obtenir un Blob
+        
+          // Maintenant, vous pouvez procéder à l'envoi du PDF au backend via Axios
+          sendPDFToBackend(pdfBlob);
+        };    
+        
+        const handleGenerateAndSend = async () => {
+          const pdfBlob = await generatePDF();
+          closeMailModal()
+          sendPDFToBackend(pdfBlob);
+        };
+        
+        function openMailModal(e) {
+          e.preventDefault()
+          setShowMailModal(true);
+        }
+      
+        function closeMailModal() {
+          setShowMailModal(false);
+        }
   return (
     <div className="container">
       <form className="form_devis secondColor light">
@@ -211,6 +274,7 @@ const NouveauDevis = () => {
         {selectedClient && (
           <div>
             <span>Travail choisi: {selectedClient.nom_commande}</span>
+            <br/>
             <span>Client choisi: {selectedClient.nom_societe}</span>
           </div>
         )}
@@ -221,7 +285,7 @@ const NouveauDevis = () => {
             <ul>
               {selectedProducts.map((product, index) => (
                 <li key={index}>
-                  Produit: {product.product}, Quantité: {product.quantity}, Prix: {product.price} € 
+                  Produit: {product.product}, Quantité: {product.quantity}, Prix: {Math.round(product.price*100)/100} € 
                   <button className="bouton light" onClick={(e) => supprimerProduit(e, product.id)}>Supprimer</button>
                 </li>
               ))}
@@ -230,12 +294,61 @@ const NouveauDevis = () => {
             </div>
         <span>Total: {calculateTotalPrice()} €</span>
         <button className="bouton light" type="button" onClick={openProductModal}>Ajouter un produit</button>
+        <Modal
+              isOpen={showMailModal}
+              onRequestClose={closeMailModal}
+              style={{
+                overlay: {
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  zIndex: 1000,
+                },
+                content: {
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "50%",
+                  padding: "20px",
+                  borderRadius: "4px",
+                  height: "50%",
+                },
+              }}
+              contentLabel="modifier_mail"
+            >
+              <div>
+                {selectedClient && (
+                  <div>
+                    <h2>Mail à {selectedClient.email}</h2>
+                    <label>Objet :</label>
+                    <input
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                    />
+                    <br />
+                    <label>Contenu :</label>
+                    <textarea
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <br />
+                    <button className="bouton light" onClick={handleGenerateAndSend}>
+                      Envoyer le mail
+                    </button>
+                    <button className="bouton light" onClick={closeMailModal}>
+                      Annuler
+                    </button>
+                  </div>
+                )}
+              </div>
+            </Modal>
+
+              <button className="bouton light" onClick={openMailModal}>Envoyer le devis par mail</button>
         <button className="button_submit bouton light" onClick={changeDevis}>
           Valider
         </button>
       </form>
 
-      <div className="apercu_devis">
+      <div className="apercu_devis" id="apercu_devis">
         <div className="entete">
             <span>Date de création : {dateCreation}</span>
             <span className="client_address">{selectedAdresseClient}</span>
@@ -248,7 +361,7 @@ const NouveauDevis = () => {
             <ul>
               {selectedProducts.map((product, index) => (
                 <li key={index}>
-                  Produit: {product.product}, Quantité: {product.quantity}, Prix: {product.price} €
+                  Produit: {product.product}, Quantité: {product.quantity}, Prix: {Math.round(product.price*100)/100} €
                 </li>
               ))}
               <li>Total: {calculateTotalPrice()} €</li>
@@ -319,10 +432,12 @@ const NouveauDevis = () => {
         </div>
         <div>
           <label>Produit choisi : {selectedProduct.nom}</label>
+          <br/>
           <label>Quantité : </label>
           <input
             type="number"
-            min="1"
+            min="0.1"
+            step="0.1"
             value={selectedQuantity}
             onChange={(e) => setSelectedQuantity(e.target.value)}
           />

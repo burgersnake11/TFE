@@ -13,7 +13,10 @@ const Commandes = () => {
   function navigate_to_nouvelle_commande() {
     navigate('/nouveau_travail');
   }
-
+  useEffect(()=>{
+    setCurrentPage(1)
+  }, [searchTerm])
+  
   function navigate_to_to_do_list(commande_id, client, nom_commande) {
     navigate('/todolist', { state: [commande_id, client, nom_commande] });
   }

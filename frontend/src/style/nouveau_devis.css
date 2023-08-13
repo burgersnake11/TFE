@@ -11,7 +11,7 @@
 /* Styles pour le formulaire */
 .form_devis {
     width: 93%; /* Réduire la taille du formulaire à 60% de la largeur */
-    height: 100%; /* Hauteur maximale de l'écran */
+    height: 95%; /* Hauteur maximale de l'écran */
     overflow-y: auto; /* Ajouter une barre de défilement si nécessaire */
     margin-top: 20px; /* Ajouter une marge supérieure de 20px */
     margin-left: auto;
@@ -24,8 +24,8 @@
 
 /* Styles pour l'aperçu du devis */
 .apercu_devis {
-    width: 95%; /* Réduire la taille de l'aperçu à 40% de la largeur */
-    height: 105%; /* Hauteur maximale de l'écran */
+    width: 570px; /* Réduire la taille de l'aperçu à 40% de la largeur */
+    height: 780px; /* Hauteur maximale de l'écran */
     padding: 20px;
     border: 3px solid black; /* Ajouter une bordure */
     background-color: #fff; /* Fond blanc */
@@ -36,6 +36,8 @@
     flex-direction: column;
     justify-content: space-between;
     font-size: 10px;
+    position: relative;
+    left: 10%;
 }
 
 /* Styles pour la partie supérieure de l'aperçu */

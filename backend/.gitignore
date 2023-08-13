@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+.env
+build/
+dist/
+*.log
+*.swp
+*.tmp

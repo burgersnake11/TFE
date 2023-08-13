@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 const DetailJournee = ({ activities }) => {
   const navigate = useNavigate();
-
   // Trie les activités par heure de début (du plus tôt au plus tard)
   activities.sort((a, b) => {
     if (a.heure_debut && b.heure_debut) {
@@ -18,8 +17,8 @@ const DetailJournee = ({ activities }) => {
       return 0;
     }
   });
-  function navigate_to_to_do_list(commande_id) {
-    navigate('/todolist', { state: [commande_id] });
+  function navigate_to_to_do_list(commande_id, nom_commande, nom_societe) {
+    navigate('/todolist', { state: [commande_id, nom_societe, nom_commande] });
   }
   const formatTime = (time) => {
     if (!time) return '';
@@ -94,13 +93,13 @@ const DetailJournee = ({ activities }) => {
                   </span>
                   <button className="bouton light" onClick={() => handleDeleteConfirmation(activity.pk_activite_id)}>Supprimer</button>
                 </div>
-                {expandedActivityId === activity.pk_activite_id && (
                   <div>
                     {activity["fk_commande_id"] ? (
                       <div className="activity-description">
-                      <button className="bouton light" onClick={() => navigate_to_to_do_list(activity["fk_commande_id"])}>
+                      <button className="bouton light" onClick={() => navigate_to_to_do_list(activity["fk_commande_id"],activity["nom_commande"], activity["nom_societe"])}>
                       To do list
                     </button>
+                    <label>Travail : {activity.nom_commande}, Client : {activity.nom_societe}</label>
                     </div>
                     ) : (
                       <div className="activity-description">
@@ -112,7 +111,6 @@ const DetailJournee = ({ activities }) => {
                       </div>
                     )}
                   </div>
-                )}
               </div>
             );
           })}

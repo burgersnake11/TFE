@@ -19,11 +19,15 @@ const NouveauClient = () => {
     const navigate = useNavigate();
 
     function create_client(e){
+        e.preventDefault()
         if (!gsm && !fixe) {
             alert("Veuillez saisir au moins un numéro de contact (GSM ou fixe).");
-            e.preventDefault()
             return;
           }
+        else if(!nomSociete && !nomClient){
+            alert("Veuillez saisir au moins un nom de société ou un nom de client.");
+            return;
+        }
         else{
             let jsonToSend = {
                 "nom_societe" : nomSociete,
@@ -38,7 +42,6 @@ const NouveauClient = () => {
                 "fixe" : fixe,
                 "email" : email
             }
-            console.log(jsonToSend)
             axios.post("http://localhost:3001/nouveau_client", jsonToSend).catch(
                     err => console.warn(err)
             )
@@ -50,27 +53,10 @@ const NouveauClient = () => {
         <form className="form_client light secondColor" onSubmit={create_client}>
             <h2>Nouveau client : </h2>
             <label>Nom de la société : </label>
-            <input type="text" onChange={(e) =>setNomSociete(e.target.value)} required/>
-            <div className="addresse mainColor dark">
-                <h3>Adresse : </h3>
-                <label>Rue : </label>
-                <input type="text" onChange={(e) =>setRue(e.target.value)} required/>
-                <br></br>
-                <label>Numéro :</label>
-                <input type="number" min="0" onChange={(e) =>setNumero(e.target.value)} required/>
-                <br></br>
-                <label>Code postal : </label>
-                <input type="number" min="0" onChange={(e) =>setCodePostal(e.target.value)} required/>
-                <br></br>
-                <label>Commune : </label>
-                <input type="text" onChange={(e) =>setCommune(e.target.value)} required/>
-                <br></br>
-                <label>Pays : </label>
-                <input type="text" onChange={(e) =>setPays(e.target.value)} required/>
-            </div>
+            <input type="text" onChange={(e) =>setNomSociete(e.target.value)} value={nomSociete}/>
             <br></br>
             <label>Nom du client : </label>
-            <input type="text" onChange={(e) =>setNomClient(e.target.value)} required/>
+            <input type="text" onChange={(e) =>setNomClient(e.target.value)} value={nomClient}/>
             <br></br>
             <label>Prénom du client : </label>
             <input type="text" onChange={(e) =>setPrenomClient(e.target.value)} />
@@ -100,12 +86,24 @@ const NouveauClient = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
             />
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
+            <div className="addresse mainColor dark">
+                <h3>Adresse : </h3>
+                <label>Rue : </label>
+                <input type="text" onChange={(e) =>setRue(e.target.value)} required/>
+                <br></br>
+                <label>Numéro :</label>
+                <input type="number" min="0" onChange={(e) =>setNumero(e.target.value)}/>
+                <br></br>
+                <label>Code postal : </label>
+                <input type="number" min="0" onChange={(e) =>setCodePostal(e.target.value)} required/>
+                <br></br>
+                <label>Commune : </label>
+                <input type="text" onChange={(e) =>setCommune(e.target.value)} required/>
+                <br></br>
+                <label>Pays : </label>
+                <input type="text" onChange={(e) =>setPays(e.target.value)} value={"Belgique"} required/>
+            </div>
+            <br/>
             <button className="button_submit bouton light" type="submit">Valider</button>
         </form>
     )

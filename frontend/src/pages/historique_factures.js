@@ -14,7 +14,10 @@ const Historique_factures = () => {
   const [factureToDeleteId, setFactureToDeleteId] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredFactures, setFilteredFactures] = useState([]);
-
+  useEffect(()=>{
+    setCurrentPage(1)
+  }, [searchTerm])
+  
   const applySearchFilter = () => {
     const filtered = factures.filter(facture => 
       facture.nom_societe.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -29,17 +32,16 @@ const Historique_factures = () => {
   
   useEffect(() => {
     axios.get('http://localhost:3001/factures').then((res) => {
-      console.log(res.data.rows)
       setFactures(res.data.rows);
     });
     axios.get('http://localhost:3001/montant').then((res) => {
       if(res.data[0].payer===true){
-        setPaye(Number(res.data[0].htva6) + Number(res.data[0].htva21) + Number(res.data[0].htva6)*0.06 + Number(res.data[0].htva21)*0.21 );
-        setNonPaye(Number(res.data[1].htva6) + Number(res.data[1].htva21) + Number(res.data[1].htva6)*0.06 + Number(res.data[1].htva21)*0.21 );
+        setPaye(Math.round((Number(res.data[0].htva6) + Number(res.data[0].htva21) + Number(res.data[0].htva6)*0.06 + Number(res.data[0].htva21)*0.21) *100)/100);
+        setNonPaye(Math.round((Number(res.data[1].htva6) + Number(res.data[1].htva21) + Number(res.data[1].htva6)*0.06 + Number(res.data[1].htva21)*0.21) *100)/100);
       }
       else{
-        setNonPaye(Number(res.data[0].htva6) + Number(res.data[0].htva21) + Number(res.data[0].htva6)*0.06 + Number(res.data[0].htva21)*0.21 );
-        setPaye(Number(res.data[1].htva6) + Number(res.data[1].htva21) + Number(res.data[1].htva6)*0.06 + Number(res.data[1].htva21)*0.21 );
+        setNonPaye(Math.round((Number(res.data[0].htva6) + Number(res.data[0].htva21) + Number(res.data[0].htva6)*0.06 + Number(res.data[0].htva21)*0.21) *100)/100);
+        setPaye(Math.round((Number(res.data[1].htva6) + Number(res.data[1].htva21) + Number(res.data[1].htva6)*0.06 + Number(res.data[1].htva21)*0.21) *100)/100);
       }
       //setNonPaye(Number(res.data.rows[1]["prix_plein"]))
     });
@@ -85,6 +87,9 @@ const Historique_factures = () => {
   function navigate_to_nouvelle_facture(){
     navigate('/nouvelle_facture')
   }
+  function navigate_to_facture_devis(){
+    navigate('/facture_devis')
+  }
   
   function showPopup(id){
     setFactureToDeleteId(id)
@@ -96,18 +101,25 @@ const Historique_factures = () => {
     )
     window.location.reload()
   }
-
+  function formatteDate(date){
+    const now = new Date(date)
+    const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`
+    return formattedDate
+  }
   return (
     <div style={{textAlign:'center'}}>
-      <button className="light bouton" onClick={navigate_to_nouvelle_facture}>
-        Nouvelle facture
+      <button className="light bouton" onClick={navigate_to_facture_devis}>
+        Nouvelle facture à partir d'un devis
       </button>
       <input
         type="text"
-        placeholder="Rechercher par client ou numéro de facture..."
+        placeholder="Rechercher une facture"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <button className="light bouton" onClick={navigate_to_nouvelle_facture}>
+        Nouvelle facture sans devis
+      </button>
       <table className='table light secondColor'>
         <thead>
           <tr>
@@ -125,8 +137,8 @@ const Historique_factures = () => {
             <tr key={index} className='item_facture'>
               <td>{i['nom_societe']}</td>
               <td>{i['facture_numero']}</td>
-              <td>{Number(i['htva6']) + Number(i['htva21']) + Number(i['htva6'])*0.06 + Number(i['htva21'])*0.21}</td>
-              <td>{i['date_limite']}</td>
+              <td>{Math.round((Number(i['htva6']) + Number(i['htva21']) + Number(i['htva6'])*0.06 + Number(i['htva21'])*0.21)*100)/100}</td>
+              <td>{formatteDate(i['date_limite'])}</td>
               <td>
                 <input type="checkbox" onChange={() => setPayer(i['pk_facture_id'])} defaultChecked={i['payer']}></input></td>
               <td>

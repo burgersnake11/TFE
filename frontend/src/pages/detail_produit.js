@@ -7,6 +7,7 @@ const DetailProduit = () => {
 
     const [prix, setPrix] = useState(0)
     const [nom, setNom] = useState("")
+    const [tva, setTVA] = useState(0)
     const [selectedImage, setSelectedImage] = useState(null);
     const navigate = useNavigate();
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
@@ -14,21 +15,29 @@ const DetailProduit = () => {
     useEffect(() => {
         axios.get("http://localhost:3001/produit", {params : {"id":id}}).then( res => {
             setNom(res.data.rows[0].nom_produit)
-            setPrix(res.data.rows[0].prix)    
+            setPrix(res.data.rows[0].prix)
+            setTVA(res.data.rows[0].tva)    
             setDataLoaded(true); // Marquer les données comme chargées
         })
     },[])
     function modifier_produit(e){
         e.preventDefault()
+        if(nom.indexOf("'") !== -1 || nom.indexOf('"') !== -1){
+            alert("Veuillez saisir un nom de produit sans guillement.");
+            return;
+        }
+        else{
         let jsonToSend = {
             "id":id,
             "nom":nom,
             "prix":Number(prix),
+            "tva":Number(tva)
         }
         axios.post("http://localhost:3001/produit", jsonToSend).catch(
             err => console.warn(err)
         ) 
         navigate('/produits');
+        }
     }
     const handleImageChange = (event) => {
         setSelectedImage(event.target.files[0]);
@@ -40,8 +49,14 @@ const DetailProduit = () => {
             <br></br>
             <label>Nom : </label>
             <br></br>
-            <input type="text"  classname="nom" onChange={(e) => setNom(e.target.value)} pattern="[A-Za-z\s]+" maxLength="20" required defaultValue={nom}></input>
+            <input type="text" style={{width:"35%"}} classname="nom" onChange={(e) => setNom(e.target.value)} maxLength="100" required defaultValue={nom}></input>
             <br></br>
+            <label>TVA (en pourcentage):</label>
+            <select onChange={(e) => setTVA(e.target.value)} value={tva}>
+                <option value={6}>6%</option>
+                <option value={21}>21%</option>
+            </select>
+            <br/>
             <label>Prix : </label>
             <br></br>
             <input type="number" classname="prix" min="0" step="any" onChange={(e) => setPrix(e.target.value)} required defaultValue={dataLoaded ? prix : ""}></input>

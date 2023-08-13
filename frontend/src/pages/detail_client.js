@@ -8,8 +8,8 @@ const DetailClient = () => {
     let id = useLocation().state[0]
     const [nomSociete, setNomSociete] = useState("")
     const [rue, setRue] = useState("")
-    const [numero, setNumero] = useState(0)
-    const [codePostal, setCodePostal] = useState(0)
+    const [numero, setNumero] = useState("")
+    const [codePostal, setCodePostal] = useState("")
     const [commune, setCommune] = useState("")
     const [pays, setPays] = useState("")
     const [nomClient, setNomClient] = useState("")
@@ -49,10 +49,15 @@ const DetailClient = () => {
         })
     },[])    
     function modifier_client(e){
+        e.preventDefault()
         if (!gsm && !fixe) {
             alert("Veuillez saisir au moins un numéro de contact (GSM ou fixe).");
             return;
           }
+        else if(!nomSociete && !nomClient){
+            alert("Veuillez saisir au moins un nom de société ou un nom de client.");
+            return;
+        }
         else{
             let jsonToSend = {
                 "id":id,
@@ -80,10 +85,10 @@ const DetailClient = () => {
         <form className="form_client secondColor light" onSubmit={modifier_client}>
             <h2>Modifier le client : </h2>
             <label>Nom de la société : </label>
-            <input type="text" onChange={(e) =>setNomSociete(e.target.value)} required defaultValue={nomSociete}/>
+            <input type="text" onChange={(e) =>setNomSociete(e.target.value)}  value={nomSociete}/>
             <br/>
             <label>Nom du client : </label>
-            <input type="text" onChange={(e) =>setNomClient(e.target.value)} required defaultValue={nomClient}/>
+            <input type="text" onChange={(e) =>setNomClient(e.target.value)}  value={nomClient}/>
             <br></br>
             <label>Prénom du client : </label>
             <input type="text" onChange={(e) =>setPrenomClient(e.target.value)} defaultValue={prenomClient}/>
@@ -122,7 +127,7 @@ const DetailClient = () => {
                 <input type="text" onChange={(e) =>setRue(e.target.value)} required defaultValue={rue}/>
                 <br></br>
                 <label>Numéro :</label>
-                <input type="number" min="0" onChange={(e) =>setNumero(e.target.value)} required defaultValue={dataLoaded ? numero : ""}/>
+                <input type="number" min="0" onChange={(e) =>setNumero(e.target.value)} value={dataLoaded ? numero : ""}/>
                 <br></br>
                 <label>Code postal : </label>
                 <input type="number" min="0" onChange={(e) =>setCodePostal(e.target.value)} required defaultValue={dataLoaded ? codePostal : ""}/>
@@ -131,7 +136,7 @@ const DetailClient = () => {
                 <input type="text" onChange={(e) =>setCommune(e.target.value)} required defaultValue={commune}/>
                 <br></br>
                 <label>Pays : </label>
-                <input type="text" onChange={(e) =>setPays(e.target.value)} required defaultValue={pays}/>
+                <input type="text" onChange={(e) =>setPays(e.target.value)}  value={pays}/>
             </div>
             <br></br>
             <button className="button_submit bouton light" type="submit">Valider</button>
