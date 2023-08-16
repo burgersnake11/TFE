@@ -12,6 +12,13 @@ const Default = ({setIsLoggedIn}) => {
     const [mdp, setMdp] = useState(null)
     const navigate = useNavigate();
 
+
+    function truc(){
+
+	axios.get("http://54.37.9.74:3001/truc").then(response => {
+		console.log(response)
+})
+}
     const login_verif = async (e) => {
         if(allComplete(email, mdp)) {
             e.preventDefault();
@@ -52,6 +59,7 @@ const Default = ({setIsLoggedIn}) => {
             borderRadius:"10px",
         }}>
             <h2>Se connecter</h2>
+		<button onClick={truc}>stpppp</button>
             <form className='form_connection'>
                 <div className="text_zone">
                     <i className="fa-sharp fa-solid fa-envelope"></i>

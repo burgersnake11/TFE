@@ -24,21 +24,21 @@ app.use(session({
 
 app.use(cookieParser('df4ds65f465sd4f65d4sf64s65f4s6d5f465s4f65s4f654s65f4s6f3s1df984a651q3524d68q4'));
 const client =  new Client({
-    host: "localhost",
+    host: "next_postgres",
     user: "postgres",
     port: 5432,
-    password: "6304",
+    password: "postgres",
     database: "TFE"
 
 })
 //=============================================DB==================================
 client.connect()
     .then(()=> console.log('Connexion à PostgresSQL réussie !'))
-    .catch(() => console.log('Connexion à PostgresSQL échouée !'))
+    .catch((error) => console.error(error))
 
 //=============================================CORS==================================
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://54.37.9.74:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://54.37.9.74');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -804,4 +804,9 @@ app.post('/logout', (req, res) => {
   })
   })
 }) */
+
+app.get("/truc", (req, res) => {
+	return res.status(200).json("stp");
+})
 module.exports = app
+
