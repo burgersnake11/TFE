@@ -32,7 +32,7 @@ function App() {
   const [showThemeCustomizerModal, setShowThemeCustomizerModal] = useState(false); // Product modal state
 
   useEffect(() => {
-    axios.get("http:/studio-eventail.be:3001/getcookie", { withCredentials: true })
+    axios.get("https:/studio-eventail.be:3001/getcookie", { withCredentials: true })
       .then(res => {
         setIsLoggedIn(true);
       })
@@ -50,7 +50,7 @@ function App() {
   }
 
   function handleLogout(){
-    axios.post("http://54.37.9.74:3001/logout", { withCredentials: true }).then(res => {
+    axios.post("https://54.37.9.74:3001/logout", { withCredentials: true }).then(res => {
       setIsLoggedIn(false);
     })
     .catch(error => {
@@ -61,7 +61,7 @@ function App() {
     <div className='main'>
       <BrowserRouter>
       <p className='title dark'>
-        <a href="http://54.37.9.74:3000" style={{color:"inherit", textDecoration:"none"}}>Studio éventail</a>       
+        <a href="https://54.37.9.74:3000" style={{color:"inherit", textDecoration:"none"}}>Studio éventail</a>       
         {isLoggedIn &&<button className="bouton light" style={{float:"right" }} onClick={handleLogout}>Déconnexion</button>}
       </p>
       <div className="element">

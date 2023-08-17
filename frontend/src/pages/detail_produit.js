@@ -13,7 +13,7 @@ const DetailProduit = () => {
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
 
     useEffect(() => {
-        axios.get("http://54.37.9.74:3001/produit", {params : {"id":id}}).then( res => {
+        axios.get("https://54.37.9.74:3001/produit", {params : {"id":id}}).then( res => {
             setNom(res.data.rows[0].nom_produit)
             setPrix(res.data.rows[0].prix)
             setTVA(res.data.rows[0].tva)    
@@ -33,7 +33,7 @@ const DetailProduit = () => {
             "prix":Number(prix),
             "tva":Number(tva)
         }
-        axios.post("http://54.37.9.74:3001/produit", jsonToSend).catch(
+        axios.post("https://54.37.9.74:3001/produit", jsonToSend).catch(
             err => console.warn(err)
         ) 
         navigate('/produits');

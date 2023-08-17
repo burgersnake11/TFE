@@ -38,7 +38,7 @@ const Facture = () => {
 
 
     useEffect(() => {
-        axios.get("http://54.37.9.74:3001/facture", {params : {"id":id}}).then(res => {
+        axios.get("https://54.37.9.74:3001/facture", {params : {"id":id}}).then(res => {
           console.log(res.data)
             setSelectedClient(res.data)
             setNumeroFacture(res.data.facture_numero)
@@ -69,7 +69,7 @@ const Facture = () => {
             setDataLoaded(true); // Marquer les données comme chargées
             setSelectedProducts(res.data.produits)
           })
-        axios.get("http://54.37.9.74:3001/produits").then((res) => {
+        axios.get("https://54.37.9.74:3001/produits").then((res) => {
           let nom_produit = [];
           for (let i = 0; i < res.data.length; i += 1) {
             nom_produit.push({
@@ -164,7 +164,7 @@ const Facture = () => {
             "produits": selectedProducts,
             "date":limitDate,
         }
-        axios.post("http://54.37.9.74:3001/facture", jsonToSend).catch(
+        axios.post("https://54.37.9.74:3001/facture", jsonToSend).catch(
             err => console.warn(err)
         )
         navigate("/historique_factures")
@@ -208,7 +208,7 @@ const Facture = () => {
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://54.37.9.74:3001/mail_facture', formData);
+        axios.post('https://54.37.9.74:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }

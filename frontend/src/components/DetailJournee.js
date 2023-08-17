@@ -63,7 +63,7 @@ const DetailJournee = ({ activities }) => {
   };
 
   const deleteActivity = (activityId) => {
-    axios.delete(`http://54.37.9.74:3001/activite/${activityId}`)
+    axios.delete(`https://54.37.9.74:3001/activite/${activityId}`)
       .then((response) => {
         // Recharger la page après la suppression
         window.location.reload();

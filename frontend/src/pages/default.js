@@ -12,13 +12,6 @@ const Default = ({setIsLoggedIn}) => {
     const [mdp, setMdp] = useState(null)
     const navigate = useNavigate();
 
-
-    function truc(){
-
-	axios.get("http://54.37.9.74:3001/truc").then(response => {
-		console.log(response)
-})
-}
     const login_verif = async (e) => {
         if(allComplete(email, mdp)) {
             e.preventDefault();
@@ -27,7 +20,7 @@ const Default = ({setIsLoggedIn}) => {
                 "email":email,
                 "password": hashedPassword
             }
-            axios.post("http://studio-eventail.be:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
+            axios.post("https://studio-eventail.be:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
                 .then(response => {
                     alert("Vous êtes connecté")
                     setIsLoggedIn(true)
@@ -43,7 +36,7 @@ const Default = ({setIsLoggedIn}) => {
         
     }
 /*     function test(){
-        axios.post("http://54.37.9.74:3001/test", {"email":"louisguiot11@gmail.com", "password":bcrypt.hashSync("#Rammus201975", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
+        axios.post("https://54.37.9.74:3001/test", {"email":"louisguiot11@gmail.com", "password":bcrypt.hashSync("#Rammus201975", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
             console.log(res)
         })
     } */
@@ -58,7 +51,6 @@ const Default = ({setIsLoggedIn}) => {
             borderRadius:"10px",
         }}>
             <h2>Se connecter</h2>
-		<button onClick={truc}>stpppp</button>
             <form className='form_connection'>
                 <div className="text_zone">
                     <i className="fa-sharp fa-solid fa-envelope"></i>

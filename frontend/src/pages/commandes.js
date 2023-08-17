@@ -34,7 +34,7 @@ const Commandes = () => {
   }, [searchTerm, commandes]);
 
   useEffect(() => {
-    axios.get('http://54.37.9.74:3001/commandes').then((res) => {
+    axios.get('https://54.37.9.74:3001/commandes').then((res) => {
       setCommandes(res.data);
     });
   }, []);
