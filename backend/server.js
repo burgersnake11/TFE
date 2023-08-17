@@ -1,5 +1,7 @@
 const http = require('http');
 const app = require('./app');
+const https = require('https');
+const fs = require('fs');
 
 const normalizePort = val => { //a fonction normalizePort renvoie un port valide, qu'il soit fourni sous la forme d'un numéro ou d'une chaîne
   const port = parseInt(val, 10);
@@ -14,6 +16,11 @@ const normalizePort = val => { //a fonction normalizePort renvoie un port valide
 };
 const port = normalizePort(process.env.PORT || '3001'); //si l'environement du serveur envoie un port a utiliser, la fonction errorHandler  recherche les différentes erreurs et les gère de manière appropriée. Elle est ensuite enregistrée dans le serveur 
 app.set('port', port); //définit les ports de l'application express
+
+const options = {
+  key: fs.readFileSync('/app/certs/privkey.pem'),
+  cert: fs.readFileSync('/app/certs/fullchain.pem')
+};
 
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
@@ -35,7 +42,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(app); //fonction appelée a chaque requetes
+const server = http.createServer(options, app); //fonction appelée a chaque requetes
 
 server.on('error', errorHandler);
 server.on('listening', () => { //un écouteur d'évènements est également enregistré, consignant le port ou le canal nommé sur lequel le serveur s'exécute dans la console
