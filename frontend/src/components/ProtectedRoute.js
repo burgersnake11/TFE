@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    axios.get("http://54.37.9.74:3001/getcookie", { withCredentials: true })
+    axios.get("http://studio-eventail.be:3001/getcookie", { withCredentials: true })
       .then(res => {
         setIsLoggedIn(true);
       })

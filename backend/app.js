@@ -38,7 +38,7 @@ client.connect()
 
 //=============================================CORS==================================
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://54.37.9.74');
+    res.setHeader('Access-Control-Allow-Origin', 'http://studio-eventail.be');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -749,7 +749,7 @@ app.post("/connexion", (req, res)=> {
           // expires works the same as the maxAge
           //secure: false, // mettre l'attribut à true une fois que le site est en HTTPS
           httpOnly: true,
-          //sameSite: 'none',
+          SameSite: 'None',
           signed: true,
         });
         req.session.userId = response.rows[0].pk_user_id;
@@ -808,5 +808,6 @@ app.post('/logout', (req, res) => {
 app.get("/truc", (req, res) => {
 	return res.status(200).json("stp");
 })
+
 module.exports = app
 

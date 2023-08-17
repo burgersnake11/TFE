@@ -15,6 +15,7 @@ COPY ./ ./
 RUN npm run build
 
 # Exposez le port sur lequel l'application réagit
+
 EXPOSE 3000
 
 # Commande pour exécuter l'application

@@ -20,7 +20,7 @@ const Default = () => {
                 "email":email,
                 "password": hashedPassword
             }
-            axios.post("http://54.37.9.74:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
+            axios.post("http://studio-eventail.be:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
                 .then(response => {
                     alert("Vous êtes connecté")
                     navigate('/');
