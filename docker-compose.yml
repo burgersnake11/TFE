@@ -1,10 +1,11 @@
 version: '3'
 services:
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
     ports:
-     - "80:3000"
+     - "3000"
     restart: always
   backend:
     build:
@@ -27,6 +28,19 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Montez le fichier de configuration Nginx
+      - ./fullchain.pem:/etc/nginx/fullchain.pem
+      - ./privkey.pem:/etc/nginx/privkey.pem
+    depends_on:
+      - frontend
     restart: always
 volumes:
   postgres_data:

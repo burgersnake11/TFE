@@ -18,8 +18,8 @@ const port = normalizePort(process.env.PORT || '3001'); //si l'environement du 
 app.set('port', port); //définit les ports de l'application express
 
 const options = {
-  key: fs.readFileSync('/app/certs/privkey.pem'),
-  cert: fs.readFileSync('/app/certs/fullchain.pem')
+  key: fs.readFileSync('privkey.pem'),
+  cert: fs.readFileSync('fullchain.pem')
 };
 
 const errorHandler = error => {
@@ -42,7 +42,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(options, app); //fonction appelée a chaque requetes
+const server = https.createServer(options, app); //fonction appelée a chaque requetes
 
 server.on('error', errorHandler);
 server.on('listening', () => { //un écouteur d'évènements est également enregistré, consignant le port ou le canal nommé sur lequel le serveur s'exécute dans la console

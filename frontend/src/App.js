@@ -32,7 +32,7 @@ function App() {
   const [showThemeCustomizerModal, setShowThemeCustomizerModal] = useState(false); // Product modal state
 
   useEffect(() => {
-    axios.get("https:/studio-eventail.be:3001/getcookie", { withCredentials: true })
+    axios.get("https://studio-eventail.be:3001/getcookie", { withCredentials: true })
       .then(res => {
         setIsLoggedIn(true);
       })

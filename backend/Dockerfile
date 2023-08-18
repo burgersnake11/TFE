@@ -8,6 +8,10 @@ WORKDIR /app
 COPY ./package*.json ./
 RUN npm install
 
+# Copiez les clés SSL
+COPY ./fullchain.pem /app
+COPY ./privkey.pem /app
+
 # Copiez le reste du code source
 COPY ./ ./
 
