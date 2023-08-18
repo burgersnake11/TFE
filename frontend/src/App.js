@@ -50,7 +50,7 @@ function App() {
   }
 
   function handleLogout(){
-    axios.post("https://54.37.9.74:3001/logout", { withCredentials: true }).then(res => {
+    axios.post("https://studio-eventail.be:3001/logout", { withCredentials: true }).then(res => {
       setIsLoggedIn(false);
     })
     .catch(error => {

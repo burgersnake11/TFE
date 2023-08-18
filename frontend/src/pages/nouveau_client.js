@@ -42,7 +42,7 @@ const NouveauClient = () => {
                 "fixe" : fixe,
                 "email" : email
             }
-            axios.post("https://54.37.9.74:3001/nouveau_client", jsonToSend).catch(
+            axios.post("https://studio-eventail.be:3001/nouveau_client", jsonToSend).catch(
                     err => console.warn(err)
             )
             navigate('/clients');

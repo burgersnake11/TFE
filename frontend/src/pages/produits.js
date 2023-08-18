@@ -21,7 +21,7 @@ function Produits() {
     navigate('/detail_produit', { state: [id] })
   }
   useEffect(() => {
-    axios.get('https://54.37.9.74:3001/produits').then((res) => {
+    axios.get('https://studio-eventail.be:3001/produits').then((res) => {
       setProduits(res.data);
     });
   }, []);

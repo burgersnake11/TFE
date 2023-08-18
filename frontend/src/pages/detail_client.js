@@ -22,7 +22,7 @@ const DetailClient = () => {
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
 
     useEffect(() => {
-        axios.get("https://54.37.9.74:3001/client", {params : {"id":id}}).then( res => {
+        axios.get("https://studio-eventail.be:3001/client", {params : {"id":id}}).then( res => {
             setNomSociete(res.data.rows[0].nom_societe)
             setRue(res.data.rows[0].rue)
             setNumero(res.data.rows[0].numero)
@@ -74,7 +74,7 @@ const DetailClient = () => {
                 "fixe" : fixe,
                 "email" : email
             }
-            axios.post("https://54.37.9.74:3001/client", jsonToSend).catch(
+            axios.post("https://studio-eventail.be:3001/client", jsonToSend).catch(
                     err => console.warn(err)
             )
             navigate('/clients');

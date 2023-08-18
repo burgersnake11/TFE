@@ -21,7 +21,7 @@ const NouveauProduit = () => {
                 "prix":Number(prix),
                 "TVA":Number(TVA)
             }
-            axios.post("https://54.37.9.74:3001/produits", jsonToSend).catch(
+            axios.post("https://studio-eventail.be:3001/produits", jsonToSend).catch(
                 err => console.warn(err)
             ) 
             navigate('/produits');
