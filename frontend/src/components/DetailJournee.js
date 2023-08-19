@@ -63,7 +63,7 @@ const DetailJournee = ({ activities }) => {
   };
 
   const deleteActivity = (activityId) => {
-    axios.delete(`http://localhost:3001/activite/${activityId}`)
+    axios.delete(`https://studio-eventail.be:3001/activite/${activityId}`)
       .then((response) => {
         // Recharger la page après la suppression
         window.location.reload();

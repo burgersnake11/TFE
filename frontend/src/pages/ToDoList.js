@@ -15,7 +15,7 @@ const TodoList = () => {
   useEffect(() => {
     let id_principales = []
     let id_secondaires = []
-    axios.get("http://localhost:3001/todo", { params: { "commande_id": commandNumber } }).then((res) => {
+    axios.get("https://studio-eventail.be:3001/todo", { params: { "commande_id": commandNumber } }).then((res) => {
       res.data.forEach(tache => {
         id_principales.push(tache.pk_tache_principale_id)
         tache.subTasks.forEach(sous_tache => {
@@ -99,7 +99,7 @@ const TodoList = () => {
     }));
     console.log(tasksToSave)
     // Stocker l'objet dans le stockage local (localStorage)
-    axios.post('http://localhost:3001/todo', {"taches": tasksToSave, "commande_id":commandNumber, "taches_secondaire_id":taches_secondaires_id, "taches_principales_id":taches_principales_id}).catch((err) => {
+    axios.post('https://studio-eventail.be:3001/todo', {"taches": tasksToSave, "commande_id":commandNumber, "taches_secondaire_id":taches_secondaires_id, "taches_principales_id":taches_principales_id}).catch((err) => {
       console.warn(err);
     });
     // Rafraîchir la page pour réinitialiser la to-do list

@@ -56,10 +56,10 @@ const Nouvelle_facture = () => {
     }, [searchTerm2, produits]);
 
     useEffect(() => {
-      axios.get("http://localhost:3001/facture_numero").then((res) => {
+      axios.get("https://studio-eventail.be:3001/facture_numero").then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("http://localhost:3001/commandes").then((res) => {
+      axios.get("https://studio-eventail.be:3001/commandes").then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -76,7 +76,7 @@ const Nouvelle_facture = () => {
         }));
         setClient(arrayclient);
       });
-      axios.get("http://localhost:3001/produits").then((res) => {
+      axios.get("https://studio-eventail.be:3001/produits").then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({
@@ -163,7 +163,7 @@ const Nouvelle_facture = () => {
             "date_limite":limitDate,
             "produits":selectedProducts,
         }
-        axios.post("http://localhost:3001/nouvelle_facture", jsonToSend).catch(
+        axios.post("https://studio-eventail.be:3001/nouvelle_facture", jsonToSend).catch(
                 err => console.warn(err)
         )
         navigate('/historique_factures');
@@ -270,7 +270,7 @@ const Nouvelle_facture = () => {
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://localhost:3001/mail_facture', formData);
+        axios.post('https://studio-eventail.be:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }
@@ -300,7 +300,7 @@ const Nouvelle_facture = () => {
         formData.append('email', selectedClient.email);
 
 
-        axios.post('http://localhost:3001/mail_facture', formData).then(function (response) {
+        axios.post('https://studio-eventail.be:3001/mail_facture', formData).then(function (response) {
           console.log(response);
         })
         .catch(function (error) {

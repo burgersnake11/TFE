@@ -24,21 +24,21 @@ app.use(session({
 
 app.use(cookieParser('df4ds65f465sd4f65d4sf64s65f4s6d5f465s4f65s4f654s65f4s6f3s1df984a651q3524d68q4'));
 const client =  new Client({
-    host: "localhost",
+    host: "next_postgres",
     user: "postgres",
     port: 5432,
-    password: "6304",
+    password: "postgres",
     database: "TFE"
 
 })
 //=============================================DB==================================
 client.connect()
     .then(()=> console.log('Connexion à PostgresSQL réussie !'))
-    .catch(() => console.log('Connexion à PostgresSQL échouée !'))
+    .catch((error) => console.error(error))
 
 //=============================================CORS==================================
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'https://studio-eventail.be');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -282,8 +282,8 @@ app.post('/activite', (req, res) => {
     let str_request = "INSERT INTO public.agenda (\
         nom, date" 
     let str_values = ") VALUES ($1,$2"
-        
-    let values = [addBackslashes(req.body.nom), req.body.date]
+    let date = req.body.date.split("/")[2]+"-"+req.body.date.split("/")[1]+"-"+req.body.date.split("/")[0]
+    let values = [addBackslashes(req.body.nom), date]
     if(req.body.heure_debut){
         str_request+=", heure_debut"
         str_values+="$"+(values.length())
@@ -762,7 +762,7 @@ app.post("/connexion", (req, res)=> {
           // expires works the same as the maxAge
           //secure: false, // mettre l'attribut à true une fois que le site est en HTTPS
           httpOnly: true,
-          //sameSite: 'none',
+          SameSite: 'None',
           signed: true,
         });
         req.session.userId = response.rows[0].pk_user_id;
@@ -810,11 +810,17 @@ app.post('/logout', (req, res) => {
     res.json({ message: 'Déconnexion réussie' });
   });
 });
-/* app.post("/test", (req, res) => {
+/*app.post("/test", (req, res) => {
   argon2.hash(req.body.password).then(passwordhashed => {
     client.query("INSERT INTO public.user (email, password) VALUES ('"+req.body.email+"', '"+passwordhashed+"')", (err, response) => {
       console.log(err)
   })
   })
-}) */
+}) 
+
+app.get("/truc", (req, res) => {
+	return res.status(200).json("stp");
+})*/
+
 module.exports = app
+

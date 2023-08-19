@@ -20,14 +20,13 @@ const Default = ({setIsLoggedIn}) => {
                 "email":email,
                 "password": hashedPassword
             }
-            axios.post("http://localhost:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
+            axios.post("https://studio-eventail.be:3001/connexion", {"email":email,"password": hashedPassword}, { withCredentials: true })
                 .then(response => {
                     alert("Vous êtes connecté")
                     setIsLoggedIn(true)
                     navigate('/');
                 })
                 .catch(response => {
-                    console.log(response.response.status)
                     setIsLoggedIn(true)
                     alert("Email ou mot de passe incorrect")
                 })
@@ -36,8 +35,8 @@ const Default = ({setIsLoggedIn}) => {
         }
         
     }
-/*     function test(){
-        axios.post("http://localhost:3001/test", {"email":"louisguiot11@gmail.com", "password":bcrypt.hashSync("#Rammus201975", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
+    /* function test(){
+        axios.post("https://studio-eventail.be:3001/test", {"email":"studio.eventail.facture@gmail.com", "password":bcrypt.hashSync("MotDePasseTemporaire", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
             console.log(res)
         })
     } */
@@ -64,9 +63,9 @@ const Default = ({setIsLoggedIn}) => {
                 <button className="bouton light" onClick={login_verif}>
                     Connexion
                 </button>
-{/*                 <button onClick={test}>
+        {/*         <button onClick={test}>
                     test 
-                </button> */}
+                </button>*/}
             </form>
         </div>
     )

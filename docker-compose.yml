@@ -1,0 +1,46 @@
+version: '3'
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+    ports:
+     - "3000"
+    restart: always
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://postgres:Ab1234@postgres/TFE
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    image: postgres:latest
+    container_name: next_postgres
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "TFE"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Montez le fichier de configuration Nginx
+      - ./fullchain.pem:/etc/nginx/fullchain.pem
+      - ./privkey.pem:/etc/nginx/privkey.pem
+    depends_on:
+      - frontend
+    restart: always
+volumes:
+  postgres_data:
