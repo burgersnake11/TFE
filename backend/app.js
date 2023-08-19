@@ -282,8 +282,9 @@ app.get('/agenda', (req, res) => {
 app.post('/activite', (req, res) => {
     let str_request = "INSERT INTO public.agenda (\
         nom, date" 
+    let date = req.body.date.split("/")[2]+"-"+req.body.date.split("/")[1]+"-"+req.body.date.split("/")[0]
     let str_values = ") VALUES (\
-        '"+req.body.nom+"'::text,'"+req.body.date+"'::date"
+        '"+req.body.nom+"'::text,'"+date+"'::date"
     if(req.body.heure_debut){
         str_request+=", heure_debut"
         str_values+=", '"+req.body.heure_debut+"'::time without time zone"
@@ -797,17 +798,17 @@ app.post('/logout', (req, res) => {
     res.json({ message: 'Déconnexion réussie' });
   });
 });
-/* app.post("/test", (req, res) => {
+/*app.post("/test", (req, res) => {
   argon2.hash(req.body.password).then(passwordhashed => {
     client.query("INSERT INTO public.user (email, password) VALUES ('"+req.body.email+"', '"+passwordhashed+"')", (err, response) => {
       console.log(err)
   })
   })
-}) */
+}) 
 
 app.get("/truc", (req, res) => {
 	return res.status(200).json("stp");
-})
+})*/
 
 module.exports = app
 
