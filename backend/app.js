@@ -38,13 +38,16 @@ client.connect()
 
 //=============================================CORS==================================
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://54.37.9.74:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-
+function addBackslashes(inputString) {
+  const escapedString = inputString.replace(/['"]/g, '\\$&');
+  return escapedString;
+}
 //app.set('trust proxy', 1);
 
 /* var xhr = new XMLHttpRequest();
@@ -96,9 +99,8 @@ app.post('/nouvelle_facture', (req, res) => {
 
   client.query(
       "INSERT INTO public.facture (\
-          facture_numero, description, fk_status_id, date_limite, fk_commande_id, fk_type_id, htva6, htva21, annee) VALUES (\
-          "+req.body.numeroFacture+"::integer, '"+req.body.descriptif+"'::text, 1::integer, '"+req.body.date_limite+"'::date, "+req.body.fk_commande_id+"::integer, '1'::integer, "+req.body.HTVA6+"::double precision, "+req.body.HTVA21+"::double precision, "+new Date().getFullYear()+")\
-            returning pk_facture_id;",(err, response) => {
+          facture_numero, description, fk_status_id, date_limite, fk_commande_id, fk_type_id, htva6, htva21, annee) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)\
+            returning pk_facture_id;",[req.body.numeroFacture, addBackslashes(req.body.descriptif),1, req.body.date_limite, req.body.fk_commande_id,1, req.body.HTVA6, req.body.HTVA21, new Date().getFullYear()],(err, response) => {
               if(err){
                 console.error(err)
               }
@@ -146,16 +148,14 @@ app.get('/clients',(req, res) => {
 app.post("/nouveau_client", (req, res) => {
     client.query(
         "INSERT INTO public.commune (\
-         nom_commune, code_postal, pays) VALUES (\
-        '"+req.body.commune+"'::text, '"+req.body.code_postal+"'::integer, '"+req.body.pays+"'::text)\
-        returning pk_commune_id;", (err, response)=>{
+         nom_commune, code_postal, pays) VALUES ($1,$2,$3)\
+        returning pk_commune_id;",[addBackslashes(req.body.commune), req.body.code_postal, addBackslashes(req.body.pays)], (err, response)=>{
             let id = response.rows[0].pk_commune_id
 
             client.query(
                 "INSERT INTO public.client (\
-                nom_societe, nom, prenom, gsm, fixe, email, rue, numero, status, fk_commune_id) VALUES (\
-                '"+req.body.nom_societe+"'::text, '"+req.body.nom+"'::text, '"+req.body.prenom+"'::text, '"+req.body.gsm+"'::integer, '"+req.body.fixe+"'::integer, '"+req.body.email+"'::text, '"+req.body.rue+"'::text, '"+req.body.numero+"'::integer, 'test'::text, '"+id+"'::integer)\
-                returning pk_client_id;", (err, response)=>{
+                nom_societe, nom, prenom, gsm, fixe, email, rue, numero, status, fk_commune_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)\
+                returning pk_client_id;",[addBackslashes(req.body.nom_societe), addBackslashes(req.body.nom), addBackslashes(req.body.prenom), req.body.gsm, req.body.fixe, req.body.email, addBackslashes(req.body.rue), req.body.numero, 'test', id], (err, response)=>{
                     console.log(err)
                 }
             )
@@ -166,8 +166,7 @@ app.post("/nouveau_client", (req, res) => {
 app.post("/nouvelle_commande", (req, res) => {
   client.query( 
       "INSERT INTO public.commande (\
-      fk_client_id, nom_commande) VALUES(\
-      '"+req.body.id+"'::integer, '"+req.body.nom_commande+"'::text)", (err, response)=>{
+      fk_client_id, nom_commande) VALUES($1,$2)", [req.body.id, addBackslashes(req.body.nom_commande)], (err, response)=>{
           console.log(err)
       }
   )
@@ -262,13 +261,12 @@ app.get('/produits', (req, res) => {
 
 
 app.post('/produits', (req, res) => {
-    client.query(
-        "INSERT INTO public.produits (\
-            nom_produit, prix, tva) VALUES (\
-            '"+req.body.nom_produit+"'::text, '"+req.body.prix+"'::double precision, '"+req.body.TVA+"'::integer)", (err, response) => {
-                console.log(err)
-            }
-        )
+  client.query(
+    `INSERT INTO public.produits (nom_produit, prix, tva) VALUES ($1, $2, $3)`,
+    [addBackslashes(req.body.nom_produit), req.body.prix, req.body.TVA], (err, response) => {
+      console.log(err)
+  }
+  )
 })
 
 app.get('/agenda', (req, res) => {
@@ -280,24 +278,29 @@ app.get('/agenda', (req, res) => {
 })
 
 app.post('/activite', (req, res) => {
+  console.log(req.body)
     let str_request = "INSERT INTO public.agenda (\
         nom, date" 
-    let str_values = ") VALUES (\
-        '"+req.body.nom+"'::text,'"+req.body.date+"'::date"
+    let str_values = ") VALUES ($1,$2"
+        
+    let values = [addBackslashes(req.body.nom), req.body.date]
     if(req.body.heure_debut){
         str_request+=", heure_debut"
-        str_values+=", '"+req.body.heure_debut+"'::time without time zone"
+        str_values+="$"+(values.length())
+        values.push(req.body.heure_debut)
     }
     if(req.body.heure_fin){
         str_request+=", heure_fin"
-        str_values+=", '"+req.body.heure_fin+"'::time without time zone"
+        str_values+="$"+(values.length())
+        values.push(req.body.heure_fin)
     }
     if(req.body.description){
         str_request+=", description"
-        str_values+=", '"+req.body.description+"'::text"
+        str_values+="$"+(values.length())
+        values.push(addBackslashes(req.body.description))
     }
     client.query(
-        str_request+str_values+")", (err, response) => {
+        str_request+str_values+")",values, (err, response) => {
                 console.log(err)
             }
         )
@@ -354,7 +357,7 @@ app.post('/todo', (req, res) => {
       if(!date){
         client.query(
           `INSERT INTO tache_principale (titre, finie, fk_commande_id) VALUES ($1, $2, $3) RETURNING pk_tache_principale_id`,
-          [title, completed, req.body.commande_id], // Remplacez "commande_id" par l'ID de la commande appropriée
+          [addBackslashes(title), completed, req.body.commande_id], // Remplacez "commande_id" par l'ID de la commande appropriée
           (err, response) => {
             if (err) {
               console.error('Erreur lors de l\'insertion de la tâche principale :', err);
@@ -367,7 +370,7 @@ app.post('/todo', (req, res) => {
                 if(!date){
                   client.query(
                     `INSERT INTO tache_secondaire (titre, finie, fk_tache_principale_id) VALUES ($1, $2, $3)`,
-                    [text, completed, tachePrincipaleId],
+                    [addBackslashes(text), completed, tachePrincipaleId],
                     (err) => {
                       if (err) {
                         console.error('Erreur lors de l\'insertion de la sous-tâche :', err);
@@ -378,7 +381,7 @@ app.post('/todo', (req, res) => {
                 else{
                 client.query(
                   `INSERT INTO tache_secondaire (titre, finie, fk_tache_principale_id, date) VALUES ($1, $2, $3, $4)`,
-                  [text, completed, tachePrincipaleId, date],
+                  [addBackslashes(text), completed, tachePrincipaleId, date],
                   (err) => {
                     if (err) {
                       console.error('Erreur lors de l\'insertion de la sous-tâche :', err);
@@ -394,7 +397,7 @@ app.post('/todo', (req, res) => {
       else{
         client.query(
           `INSERT INTO tache_principale (titre, finie, fk_commande_id, date) VALUES ($1, $2, $3, $4) RETURNING pk_tache_principale_id`,
-          [title, completed, req.body.commande_id, date], // Remplacez "commande_id" par l'ID de la commande appropriée
+          [addBackslashes(title), completed, req.body.commande_id, date], // Remplacez "commande_id" par l'ID de la commande appropriée
           (err, response) => {
             if (err) {
               console.error('Erreur lors de l\'insertion de la tâche principale :', err);
@@ -409,7 +412,7 @@ app.post('/todo', (req, res) => {
                 }
                 client.query(
                   `INSERT INTO tache_secondaire (titre, finie, fk_tache_principale_id, date) VALUES ($1, $2, $3, $4)`,
-                  [text, completed, tachePrincipaleId, date],
+                  [addBackslashes(text), completed, tachePrincipaleId, date],
                   (err) => {
                     if (err) {
                       console.error('Erreur lors de l\'insertion de la sous-tâche :', err);
@@ -687,6 +690,7 @@ app.get("/taches", (req,res) => {
 
 app.post('/mail_facture', upload.single('pdf'), async (req, res) => {
   try {
+    const regex = /\r\n|\r|\n/g;
     const pdfFileBuffer = req.file.buffer; // Contenu du fichier PDF en tant que Buffer
     const transporter = nodemailer.createTransport({
       service: 'SendGrid',
@@ -695,17 +699,26 @@ app.post('/mail_facture', upload.single('pdf'), async (req, res) => {
         pass: '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',
       },
     });
-
+    const emailContent = `
+    <p>`+req.body.message.replace(regex, '<br></br>')+`</p>
+    <img src="cid:logo">
+    <p><br></br>Ce message est susceptible de contenir des informations confidentielles strictement réservées à l’usage de la personne à qui il est adressé. <br></br>Si vous n’êtes pas le destinataire visé, toute lecture, utilisation, divulgation ou copie du contenu de ce message est interdite. <br></br> Si vous avez reçu ce courriel par erreur, veuillez en aviser l’expéditeur sur-le-champ."</p>
+  `;
     const mailOptions = {
       from: 'studio.eventail.facture@gmail.com',
       to: req.body.email,
       subject: req.body.sujet,
-      text: req.body.message,
+      html: emailContent,
       attachments: [
         {
           filename: 'apercu.pdf',
           content: pdfFileBuffer,
         },
+        {
+          filename: 'Logo.png',
+          path: 'signature.jpg',
+          cid: 'logo'
+        }
       ],
     };
 

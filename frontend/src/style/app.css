@@ -132,3 +132,10 @@ body{
  .moyen{
    width:5%;
  }
+
+ .main{
+   height: 100vh;
+   background-image: url("./logo.png");
+   background-repeat:no-repeat;
+   background-position:center center;
+ }

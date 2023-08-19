@@ -38,7 +38,7 @@ const NouvelleActivite = ({ selectedDay }) => {
     setActivity({ nom: '', heure_debut: '', heure_fin: '', description: '', date: '' });
 
     // Utilisez l'objet avec les nouvelles propriétés pour l'envoi de données
-    axios.post('http://54.37.9.74:3001/activite', activity).catch((err) => {
+    axios.post('http://localhost:3001/activite', activity).catch((err) => {
       console.warn(err);
     });
     window.location.reload();

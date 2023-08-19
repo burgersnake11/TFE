@@ -17,7 +17,7 @@ const NouveauClient = () => {
     const [fixe, setFixe] = useState(0)
     const [email, setEmail] = useState("")
     const navigate = useNavigate();
-
+    
     function create_client(e){
         e.preventDefault()
         if (!gsm && !fixe) {
@@ -42,7 +42,7 @@ const NouveauClient = () => {
                 "fixe" : fixe,
                 "email" : email
             }
-            axios.post("http://54.37.9.74:3001/nouveau_client", jsonToSend).catch(
+            axios.post("http://localhost:3001/nouveau_client", jsonToSend).catch(
                     err => console.warn(err)
             )
             navigate('/clients');

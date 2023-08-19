@@ -33,10 +33,10 @@ const Facture_devis = () => {
     const [devis, setDevis] = useState({})
     const [produits, setProduits] = useState([])
     useEffect(() => {
-      axios.get("http://54.37.9.74:3001/facture_numero").then((res) => {
+      axios.get("http://localhost:3001/facture_numero").then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("http://54.37.9.74:3001/devis").then((res) => {
+      axios.get("http://localhost:3001/devis").then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -66,7 +66,7 @@ const Facture_devis = () => {
     }
     
     function handleClientSelection(selectedClient) {
-        axios.get("http://54.37.9.74:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
+        axios.get("http://localhost:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
             setDevis(res.data)
             setProduits(res.data.produits)
             let prehtva6=0
@@ -107,7 +107,7 @@ const Facture_devis = () => {
             "fk_commande_id": commandeId,
             "date_limite":limitDate,
         }
-        axios.post("http://54.37.9.74:3001/nouvelle_facture", jsonToSend).catch(
+        axios.post("http://localhost:3001/nouvelle_facture", jsonToSend).catch(
                 err => console.warn(err)
         )
         navigate('/historique_factures');
@@ -161,10 +161,11 @@ const Facture_devis = () => {
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://54.37.9.74:3001/mail_facture', formData);
+        axios.post('http://localhost:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }
+      createFacture()
     };
 
     const generatePDF = async () => {
@@ -351,18 +352,17 @@ const Facture_devis = () => {
           <div className="apercu_header">
             <div className="apercu_header_left">
               <label>Date : {new Date().toLocaleDateString()}</label>
-              <div className="apercu_address">
-                Adresse : 
-                {selectedAdresseClient}
-              </div>
               <div style={{textAlign:"center"}}>
                 <h2>Facture numéro {numeroFacture}</h2>
               </div>
-            </div>
-            <div>
-            {selectedClient && (
-              <span>Client choisi: {selectedClient.nom_societe}</span>
-          )}
+              {selectedClient &&(
+              <div style={{  float: "right", width: "40%",position: "relative", left:"0%", lineHeight: "2px"}}> 
+                <p>{selectedClient.nom_societe}</p>
+                <p>{selectedClient.nom} {selectedClient.prenom}</p>
+                <p>{selectedClient.rue} {selectedClient.numero}</p>
+                <p>{selectedClient.code_postal} {selectedClient.nom_commune}</p>
+                <p>{selectedClient.pays}</p>
+              </div>)}
             </div>
           </div>
           <div>
@@ -407,9 +407,11 @@ const Facture_devis = () => {
           <div className="apercu_signature">
             Signature : ____________________________________________
           </div>
+          <div style={{fontSize:"7px"}}>
+          Studio Eventail s'engage à protéger la vie privée de ses clients. Nous reconnaissons que les données personnelles que vous nous confiez sont précieuses et importantes pour vous, et nous prenons très au sérieux notre responsabilité de protéger vos données. Les données personnelles que vous avez transmises à Studio Eventail sont nécessaires pour la bonne gestion de votre commande, de la livraison à l'envoi des devis et factures. Sans ces données, cela ne serait pas possible. Vous avez le droit de les consulter sur simple demande. Vous pouvez demander que vos données personnelles incorrectes ou incomplètes soient rectifiées et complétées. Vous avez également le droit de demander que vos données personnelles soient supprimées si c’est légalement possible. 
+          </div>
         </div>
-{/*         <button className="bouton light" onClick={generatePDF}>Générer PDF</button>
- */}      </div>
+      </div>
     </div>
     )
 }

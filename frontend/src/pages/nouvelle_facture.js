@@ -56,10 +56,10 @@ const Nouvelle_facture = () => {
     }, [searchTerm2, produits]);
 
     useEffect(() => {
-      axios.get("http://54.37.9.74:3001/facture_numero").then((res) => {
+      axios.get("http://localhost:3001/facture_numero").then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("http://54.37.9.74:3001/commandes").then((res) => {
+      axios.get("http://localhost:3001/commandes").then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -76,7 +76,7 @@ const Nouvelle_facture = () => {
         }));
         setClient(arrayclient);
       });
-      axios.get("http://54.37.9.74:3001/produits").then((res) => {
+      axios.get("http://localhost:3001/produits").then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({
@@ -126,16 +126,16 @@ const Nouvelle_facture = () => {
         },
       ]);
       if(selectedProduct.tva===6){
-        setTVA6(Math.round((TVA6 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
-        setHTVA6(Math.round((HTVA6 + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)
+        setTVA6(Math.round((TVA6 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+        setHTVA6(Math.round((HTVA6 + selectedProduct.prix*selectedQuantity)*100)/100)
       }
       else{
-        setTVA21(Math.round((TVA21 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
-        setHTVA21(Math.round((HTVA21 +selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)  
+        setTVA21(Math.round((TVA21 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+        setHTVA21(Math.round((HTVA21 +selectedProduct.prix*selectedQuantity)*100)/100)  
       }
-      setHTVATotal(Math.round((HTVATotal + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva))*100)/100)
-      setTVATotal(Math.round((TVATotal + selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
-      setTotal(Math.round((total + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva) +  selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
+      setHTVATotal(Math.round((HTVATotal + selectedProduct.prix*selectedQuantity)*100)/100)
+      setTVATotal(Math.round((TVATotal + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+      setTotal(Math.round((total + selectedProduct.prix*selectedQuantity+  selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
       setSelectedProduct("");
       setSelectedQuantity(1);
       closeProductModal();
@@ -163,7 +163,7 @@ const Nouvelle_facture = () => {
             "date_limite":limitDate,
             "produits":selectedProducts,
         }
-        axios.post("http://54.37.9.74:3001/nouvelle_facture", jsonToSend).catch(
+        axios.post("http://localhost:3001/nouvelle_facture", jsonToSend).catch(
                 err => console.warn(err)
         )
         navigate('/historique_factures');
@@ -260,17 +260,21 @@ const Nouvelle_facture = () => {
       link.download = 'apercu.pdf'; // Nom du fichier PDF
       link.click();
       URL.revokeObjectURL(blobUrl); */
+      if(typeof(pdfBlob===Object)){
 
+      }
       const formData = new FormData();
+      
       formData.append('pdf', pdfBlob, 'apercu.pdf');
       formData.append('email', selectedClient.email)
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://54.37.9.74:3001/mail_facture', formData);
+        axios.post('http://localhost:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }
+      createFacture()
     };
 
     const generatePDF = async () => {
@@ -284,7 +288,7 @@ const Nouvelle_facture = () => {
       };
     
       const pdfBlob = await html2pdf().from(element).set(pdfOptions).output('blob'); // Utilisation de la méthode 'blob' pour obtenir un Blob
-    
+
       // Maintenant, vous pouvez procéder à l'envoi du PDF au backend via Axios
       sendPDFToBackend(pdfBlob);
     };
@@ -296,7 +300,7 @@ const Nouvelle_facture = () => {
         formData.append('email', selectedClient.email);
 
 
-        axios.post('http://54.37.9.74:3001/mail_facture', formData).then(function (response) {
+        axios.post('http://localhost:3001/mail_facture', formData).then(function (response) {
           console.log(response);
         })
         .catch(function (error) {
@@ -606,6 +610,9 @@ const Nouvelle_facture = () => {
           </div>
           <div className="apercu_signature">
             Signature : ____________________________________________
+          </div>
+          <div style={{fontSize:"7px"}}>
+          Studio Eventail s'engage à protéger la vie privée de ses clients. Nous reconnaissons que les données personnelles que vous nous confiez sont précieuses et importantes pour vous, et nous prenons très au sérieux notre responsabilité de protéger vos données. Les données personnelles que vous avez transmises à Studio Eventail sont nécessaires pour la bonne gestion de votre commande, de la livraison à l'envoi des devis et factures. Sans ces données, cela ne serait pas possible. Vous avez le droit de les consulter sur simple demande. Vous pouvez demander que vos données personnelles incorrectes ou incomplètes soient rectifiées et complétées. Vous avez également le droit de demander que vos données personnelles soient supprimées si c’est légalement possible. 
           </div>
         </div>
       </div>

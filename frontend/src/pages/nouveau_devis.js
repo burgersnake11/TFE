@@ -40,10 +40,10 @@ const NouveauDevis = () => {
     const now = new Date();
     const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
     setDateCreation(formattedDate);
-    axios.get("http://54.37.9.74:3001/devis_numero").then((res) => {
+    axios.get("http://localhost:3001/devis_numero").then((res) => {
       setSelectedDevisNumero(res.data.rows[0].max+1)
     })
-    axios.get("http://54.37.9.74:3001/produits").then((res) => {
+    axios.get("http://localhost:3001/produits").then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({
@@ -54,7 +54,7 @@ const NouveauDevis = () => {
       }
       setProduits(nom_produit);
     });
-    axios.get("http://54.37.9.74:3001/commandes").then((res) => {
+    axios.get("http://localhost:3001/commandes").then((res) => {
       let arrayclient = res.data.map((data) => ({
         id: data.pk_client_id,
         nom_societe: data.nom_societe,
@@ -101,7 +101,7 @@ const NouveauDevis = () => {
       "devis_numero":selectedDevisNumero,
       "produits":selectedProducts
     }
-    axios.post("http://54.37.9.74:3001/devis", jsonToSend).catch(
+    axios.post("http://localhost:3001/devis", jsonToSend).catch(
       err => console.warn(err)
 )
   navigate('/historique_devis');  
@@ -228,10 +228,11 @@ const NouveauDevis = () => {
           formData.append('sujet', subject)
           formData.append('message', message)
           try {
-            axios.post('http://54.37.9.74:3001/mail_facture', formData);
+            axios.post('http://localhost:3001/mail_facture', formData);
           } catch (error) {
             console.error('Erreur lors de l\'envoi du PDF', error);
           }
+          changeDevis()
         };
     
         const generatePDF = async () => {
@@ -355,7 +356,16 @@ const NouveauDevis = () => {
             <h1 className="titre">
                 Devis numéro 00{selectedDevisNumero}/{ new Date().getFullYear()} pour le client {selectedClient ? selectedClient.nom_societe : ""}
             </h1>
+            {selectedClient &&(
+              <div style={{  float: "right", width: "40%",position: "relative", left:"0%", top:"0%", lineHeight: "2px"}}> 
+                <p>{selectedClient.nom_societe}</p>
+                <p>{selectedClient.nom} {selectedClient.prenom}</p>
+                <p>{selectedClient.rue} {selectedClient.numero}</p>
+                <p>{selectedClient.code_postal} {selectedClient.nom_commune}</p>
+                <p>{selectedClient.pays}</p>
+              </div>)}
             </div>
+
             <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
             <ul>
@@ -369,6 +379,9 @@ const NouveauDevis = () => {
             </div>
             <div className="signature">
             <span>Signature :</span>
+        </div>
+        <div style={{fontSize:"7px"}}>
+        Studio Eventail s'engage à protéger la vie privée de ses clients. Nous reconnaissons que les données personnelles que vous nous confiez sont précieuses et importantes pour vous, et nous prenons très au sérieux notre responsabilité de protéger vos données. Les données personnelles que vous avez transmises à Studio Eventail sont nécessaires pour la bonne gestion de votre commande, de la livraison à l'envoi des devis et factures. Sans ces données, cela ne serait pas possible. Vous avez le droit de les consulter sur simple demande. Vous pouvez demander que vos données personnelles incorrectes ou incomplètes soient rectifiées et complétées. Vous avez également le droit de demander que vos données personnelles soient supprimées si c’est légalement possible. 
         </div>
       </div>
 

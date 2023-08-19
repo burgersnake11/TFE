@@ -38,7 +38,7 @@ const Facture = () => {
 
 
     useEffect(() => {
-        axios.get("http://54.37.9.74:3001/facture", {params : {"id":id}}).then(res => {
+        axios.get("http://localhost:3001/facture", {params : {"id":id}}).then(res => {
           console.log(res.data)
             setSelectedClient(res.data)
             setNumeroFacture(res.data.facture_numero)
@@ -69,7 +69,7 @@ const Facture = () => {
             setDataLoaded(true); // Marquer les données comme chargées
             setSelectedProducts(res.data.produits)
           })
-        axios.get("http://54.37.9.74:3001/produits").then((res) => {
+        axios.get("http://localhost:3001/produits").then((res) => {
           let nom_produit = [];
           for (let i = 0; i < res.data.length; i += 1) {
             nom_produit.push({
@@ -103,16 +103,16 @@ const Facture = () => {
         },
       ]);
       if(selectedProduct.tva===6){
-        setTVA6(Math.round((TVA6 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
-        setHTVA6(Math.round((HTVA6 + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)
+        setTVA6(Math.round((TVA6 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+        setHTVA6(Math.round((HTVA6 + selectedProduct.prix*selectedQuantity)*100)/100)
       }
       else{
-        setTVA21(Math.round((TVA21 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100/(1+selectedProduct.tva/100))*100)/100)
-        setHTVA21(Math.round((HTVA21 +selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva/100))*100)/100)  
+        setTVA21(Math.round((TVA21 + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+        setHTVA21(Math.round((HTVA21 +selectedProduct.prix*selectedQuantity)*100)/100)  
       }
-      setHTVATotal(Math.round((HTVATotal + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva))*100)/100)
-      setTVATotal(Math.round((TVATotal + selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
-      setTotal(Math.round((total + selectedProduct.prix*selectedQuantity/(1+selectedProduct.tva) +  selectedProduct.prix*selectedQuantity*selectedProduct.tva/(1+selectedProduct.tva))*100)/100)
+      setHTVATotal(Math.round((HTVATotal + selectedProduct.prix*selectedQuantity)*100)/100)
+      setTVATotal(Math.round((TVATotal + selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
+      setTotal(Math.round((total + selectedProduct.prix*selectedQuantity+  selectedProduct.prix*selectedQuantity*selectedProduct.tva/100)*100)/100)
       setSelectedProduct("");
       setSelectedQuantity(1);
       closeProductModal();
@@ -164,7 +164,7 @@ const Facture = () => {
             "produits": selectedProducts,
             "date":limitDate,
         }
-        axios.post("http://54.37.9.74:3001/facture", jsonToSend).catch(
+        axios.post("http://localhost:3001/facture", jsonToSend).catch(
             err => console.warn(err)
         )
         navigate("/historique_factures")
@@ -208,10 +208,11 @@ const Facture = () => {
       formData.append('sujet', subject)
       formData.append('message', message)
       try {
-        axios.post('http://54.37.9.74:3001/mail_facture', formData);
+        axios.post('http://localhost:3001/mail_facture', formData);
       } catch (error) {
         console.error('Erreur lors de l\'envoi du PDF', error);
       }
+      changeFacture()
     };
 
     const generatePDF = async () => {
@@ -424,14 +425,18 @@ const Facture = () => {
               <div className="apercu_header">
                 <div className="apercu_header_left">
                   <p>Date : {new Date().toLocaleDateString()}
-                  <div className="apercu_address">
-                    Adresse : 
-                    {selectedAdresseClient}
-                  </div>
                   </p>
                   <h1 className="titre">
                       Devis numéro 00{dataLoaded ? selectedClient.facture_numero : ""}/{dataLoaded ? selectedClient.annee : ""} pour le client {selectedClient ? selectedClient.nom_societe : ""}
                   </h1>
+                  {selectedClient &&(
+                  <div style={{  float: "right", width: "40%",position: "relative", left:"0%", top:"0%", lineHeight: "2px"}}> 
+                    <p>{selectedClient.nom_societe}</p>
+                    <p>{selectedClient.nom} {selectedClient.prenom}</p>
+                    <p>{selectedClient.rue} {selectedClient.numero}</p>
+                    <p>{selectedClient.code_postal} {selectedClient.nom_commune}</p>
+                    <p>{selectedClient.pays}</p>
+                  </div>)}
                 </div>
               </div>
               <div className="apercu_descriptif">
@@ -465,6 +470,9 @@ const Facture = () => {
             </div>
               <div className="apercu_signature">
                 Signature : ____________________________________________
+              </div>
+              <div style={{fontSize:"7px"}}>
+              Studio Eventail s'engage à protéger la vie privée de ses clients. Nous reconnaissons que les données personnelles que vous nous confiez sont précieuses et importantes pour vous, et nous prenons très au sérieux notre responsabilité de protéger vos données. Les données personnelles que vous avez transmises à Studio Eventail sont nécessaires pour la bonne gestion de votre commande, de la livraison à l'envoi des devis et factures. Sans ces données, cela ne serait pas possible. Vous avez le droit de les consulter sur simple demande. Vous pouvez demander que vos données personnelles incorrectes ou incomplètes soient rectifiées et complétées. Vous avez également le droit de demander que vos données personnelles soient supprimées si c’est légalement possible. 
               </div>
             </div>
           </div>
