@@ -35,11 +35,14 @@ const Facture = () => {
     const [selectedAdresseClient, setSelectedAdresseClient] = useState("");
     const navigate = useNavigate();
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
+    const [text, setText] = useState('');
 
+    const handleTextareaChange = (event) => {
+      setText(event.target.value);
+    };
 
     useEffect(() => {
         axios.get("https://studio-eventail.be:3001/facture", {params : {"id":id}}).then(res => {
-          console.log(res.data)
             setSelectedClient(res.data)
             setNumeroFacture(res.data.facture_numero)
             setSelectedAdresseClient(res.data.pays + " " + res.data.numero + " " + res.data.rue + " " + res.data.code_postal + " " + res.data.nom)
@@ -48,6 +51,7 @@ const Facture = () => {
             setTVA6(res.data.htva6 ? Math.round((Number(res.data.htva6) * 0.06)*100)/100 : 0)
             setTVA21(res.data.htva21 ? Math.round((Number(res.data.htva21) * 0.21)*100)/100 : 0)
             setLimitDate(res.data.date_limite)
+            setText(res.data.description)
             if(res.data.htva6){
               if(res.data.htva21){
                 setHTVATotal(Number(res.data.htva6) + Number(res.data.htva21))
@@ -251,9 +255,13 @@ const Facture = () => {
                     Adresse : {selectedAdresseClient}
                 </span>
               </div>
-      
-              {/* <label>Descriptif :</label>
-              <textarea defaultValue={descriptif} onChange={(e) => setDescriptif(e.target.value)} /> */}
+              <label>Description : </label>
+              <textarea
+                rows={10}
+                cols={40}
+                value={text}
+                onChange={handleTextareaChange}
+              />
               <h3>Détails des produits : </h3>
               <div>
                   <table className="table" style={{border:"3px solid white"}}>
@@ -441,6 +449,7 @@ const Facture = () => {
               </div>
               <div className="apercu_descriptif">
                 <p>Descriptif :</p>
+                <pre>{text}</pre>
                 <ul>
                   {selectedProducts.map((product, index) => (
                     <li key={index}>

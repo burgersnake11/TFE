@@ -32,6 +32,11 @@ const Facture_devis = () => {
     const [limitDate,setLimitDate] = useState(1);
     const [devis, setDevis] = useState({})
     const [produits, setProduits] = useState([])
+    const [text, setText] = useState('');
+
+    const handleTextareaChange = (event) => {
+      setText(event.target.value);
+    };
     useEffect(() => {
       axios.get("https://studio-eventail.be:3001/facture_numero").then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
@@ -259,6 +264,13 @@ const Facture_devis = () => {
         <label>
           Date limite de paiement :<input type="date" onChange={(e) => setLimitDate(e.target.value)} required></input>
         </label>
+        <label>Description : </label>
+        <textarea
+          rows={10}
+          cols={40}
+          value={text}
+          onChange={handleTextareaChange}
+        />
         <h3>Détails des produits : </h3>
         <div>
             <table className="table">
@@ -367,6 +379,7 @@ const Facture_devis = () => {
           </div>
           <div>
             <p>Descriptif :</p>
+            <pre>{text}</pre>
             <div>
                 <table>
                     <thead>

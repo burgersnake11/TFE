@@ -73,7 +73,7 @@ app.get('/test', (req, res) => {
 
 app.get("/factures", (req, res) => {
     client.query(
-        "Select client.nom_societe, facture.pk_facture_id, facture.HTVA6, facture.HTVA21, facture.date_limite, facture.facture_numero, facture.payer\
+        "Select client.nom_societe, facture.pk_facture_id, facture.HTVA6, facture.HTVA21, facture.date_limite, facture.facture_numero, facture.payer, facture.description\
         from facture join commande on facture.fk_commande_id = commande.pk_commande_id\
         join client on commande.fk_client_id = client.pk_client_id\
         WHERE archiver_facture = false\

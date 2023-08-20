@@ -39,7 +39,11 @@ const Nouvelle_facture = () => {
     const facturesPerPage = 5; // Nombre de factures à afficher par page
     const navigate = useNavigate();
     const [limitDate,setLimitDate] = useState(1);
+    const [text, setText] = useState('');
 
+    const handleTextareaChange = (event) => {
+      setText(event.target.value);
+    };
     useEffect(()=>{
       setCurrentPage2(1)
     }, [searchTerm2])
@@ -162,6 +166,7 @@ const Nouvelle_facture = () => {
             "fk_commande_id": commandeId,
             "date_limite":limitDate,
             "produits":selectedProducts,
+            "descriptif":text,
         }
         axios.post("https://studio-eventail.be:3001/nouvelle_facture", jsonToSend).catch(
                 err => console.warn(err)
@@ -396,6 +401,13 @@ const Nouvelle_facture = () => {
           Adresse : {selectedAdresseClient}
         </span>
         </div>
+        <label>Description : </label>
+        <textarea
+          rows={10}
+          cols={40}
+          value={text}
+          onChange={handleTextareaChange}
+        />
         <h3>Détails des produits : </h3>
         <div>
             <table className="table" style={{border:"3px solid white"}}>
@@ -581,6 +593,7 @@ const Nouvelle_facture = () => {
               </div>)}
           <div style={{border:"3px solid black", padding:"5px 5px 300px 5px", borderRadius:"10px", }}>
             <p>Descriptif :</p>
+            <pre>{text}</pre>
             <ul>
               {selectedProducts.map((product, index) => (
                 <li key={index}>
