@@ -484,6 +484,7 @@ app.get('/todo', async (req, res) => {
   });
 
   app.post('/devis', (req, res) => {
+    console.log(req.body)
     let produits = req.body.produits
     const createDevisQuery = `
       INSERT INTO public.devis (prix_total, fk_commande_id, devis_numero, annee, date_creation, description)
@@ -709,7 +710,7 @@ app.post('/mail_facture', upload.single('pdf'), async (req, res) => {
   `;
     const mailOptions = {
       from: 'studio.eventail.facture@gmail.com',
-      to: req.body.email,
+      to: [req.body.email,'studio.eventail.facture@gmail.com'],
       cc: 'studio.eventail.facture@gmail.com',
       subject: req.body.sujet,
       html: emailContent,

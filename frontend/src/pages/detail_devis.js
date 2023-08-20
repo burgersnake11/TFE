@@ -45,6 +45,7 @@ const NouveauDevis = () => {
         setSelectedClient(res.data)
         setDataLoaded(true); // Marquer les données comme chargées
         setSelectedAdresseClient(`${res.data.rue} ${res.data.numero}, ${res.data.code_postal} ${res.data.nom_commune}, ${res.data.pays}`)
+        setText(res.data.description)
     })
     axios.get("https://studio-eventail.be:3001/produits").then((res) => {
       let nom_produit = [];
