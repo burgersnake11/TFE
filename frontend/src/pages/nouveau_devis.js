@@ -300,7 +300,7 @@ const NouveauDevis = () => {
                   <button className="bouton light" onClick={(e) => supprimerProduit(e, product.id)}>Supprimer</button>
                 </li>
               ))}
-              <li>Total: {calculateTotalPrice()} €</li>
+              <li>Total HTVA: {calculateTotalPrice()} €</li>
             </ul>
             </div>
         <span>Total: {calculateTotalPrice()} €</span>
@@ -385,7 +385,7 @@ const NouveauDevis = () => {
                   Produit: {product.product}, Quantité: {product.quantity}, Prix: {Math.round(product.price*100)/100} €
                 </li>
               ))}
-              <li>Total: {calculateTotalPrice()} €</li>
+              <li>Total HTVA: {calculateTotalPrice()} €</li>
             </ul>
             </div>
             <div className="signature">
