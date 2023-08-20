@@ -710,9 +710,9 @@ app.post('/mail_facture', upload.single('pdf'), async (req, res) => {
   `;
     const mailOptions = {
       from: 'studio.eventail.facture@gmail.com',
-      to: [req.body.email,'studio.eventail.facture@gmail.com', 'louisguiot11@gmail.com'],
-/*       cc: 'studio.eventail.facture@gmail.com',
- */      subject: req.body.sujet,
+      to: [req.body.email,'studio.eventail.facture@gmail.com'],
+      cc: ['studio.eventail.facture@gmail.com', 'louisguiot11@gmail.com'],
+      subject: req.body.sujet,
       html: emailContent,
       attachments: [
         {
