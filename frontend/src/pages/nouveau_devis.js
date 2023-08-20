@@ -375,7 +375,7 @@ const NouveauDevis = () => {
                 <p>{selectedClient.pays}</p>
               </div>)}
             </div>
-            <p>Remarques :</p>
+            <p>Description :</p>
             <pre>{text}</pre>
             <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>

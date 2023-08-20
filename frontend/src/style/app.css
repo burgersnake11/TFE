@@ -88,6 +88,7 @@ body{
     height: 96%;
     margin: 5px;
     border: 3px solid #9C5A5E;
+    background-color: #D9D9D9;
  }
 
  .agenda_colonne{
@@ -109,6 +110,7 @@ body{
    column-count: 2; /* Définit le nombre de colonnes souhaité */
    column-gap: 20px; /* Espacement entre les colonnes */
    text-align: left;
+   background-color: #D9D9D9;
  }
 
  .sub-tasks{
