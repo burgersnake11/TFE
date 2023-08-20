@@ -32,6 +32,7 @@ const NouveauDevis = () => {
 
   const handleTextareaChange = (event) => {
     setText(event.target.value);
+    console.log(text)
   };
   useEffect(()=>{
     setCurrentPage(1)
@@ -106,6 +107,7 @@ const NouveauDevis = () => {
       "produits":selectedProducts,
       "descripiton":text,
     }
+    console.log("test" + text)
     axios.post("https://studio-eventail.be:3001/devis", jsonToSend).catch(
       err => console.warn(err)
 )
@@ -289,7 +291,7 @@ const NouveauDevis = () => {
           rows={10}
           cols={40}
           value={text}
-          onChange={handleTextareaChange}
+          onChange={(e) => handleTextareaChange(e)}
         />        
         <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
