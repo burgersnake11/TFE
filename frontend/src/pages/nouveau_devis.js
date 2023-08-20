@@ -105,7 +105,7 @@ const NouveauDevis = () => {
       "fk_commande_id":selectedClient.pk_commande_id,
       "devis_numero":selectedDevisNumero,
       "produits":selectedProducts,
-      "descripiton":text,
+      "description":text,
     }
     console.log("test" + text)
     axios.post("https://studio-eventail.be:3001/devis", jsonToSend).catch(
