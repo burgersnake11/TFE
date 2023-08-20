@@ -29,7 +29,11 @@ const NouveauDevis = () => {
   const [showMailModal, setShowMailModal] = useState(false);
   const [subject, setSubject] = useState("Devis");
   const [message, setMessage] = useState("Madame, Monsieur,\r\nVeuillez trouver en pièce jointe votre devis.\r\nBien cordialement,\r\nStudio éventail.");
+  const [text, setText] = useState('');
 
+  const handleTextareaChange = (event) => {
+    setText(event.target.value);
+  };
   useEffect(() => {
     
     axios.get("https://studio-eventail.be:3001/detail_devis", {params : {"id":id}}).then( res => {
@@ -88,6 +92,7 @@ const NouveauDevis = () => {
       "devis_numero":Number(selectedClient.devis_numero),
       "produits":selectedProducts,
       "id":id,
+      "description":text,
     }
     axios.post("https://studio-eventail.be:3001/modifier_devis", jsonToSend).catch(
       err => console.warn(err)
@@ -251,8 +256,13 @@ const NouveauDevis = () => {
             <span>Client choisi: {selectedClient.nom_societe}</span>
           </div>
         )}
-{/*         <label>Description :</label>
-        <textarea/> */}
+        <label>Description : </label>
+        <textarea
+          rows={10}
+          cols={40}
+          value={text}
+          onChange={handleTextareaChange}
+        />      
         <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
             <ul>
@@ -334,6 +344,8 @@ const NouveauDevis = () => {
                 <p>{selectedClient.pays}</p>
               </div>)}
             </div>
+            <p>Description :</p>
+            <pre>{text}</pre>
             <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
             <ul>

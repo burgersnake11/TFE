@@ -31,11 +31,7 @@ const NouvelleCommande = () => {
 
     function create_client(e){
         e.preventDefault()
-        if(nomCommande.indexOf("'") !== -1 || nomCommande.indexOf('"') !== -1){
-            alert("Veuillez saisir un nom de produit sans guillement.");
-            return;
-        }
-        else{
+       
             let jsonToSend = {}
             for(let i=0;i<clients.length;i++){
                 if (clients[i].id===Number(clientChosen)){
@@ -47,7 +43,7 @@ const NouvelleCommande = () => {
                 err => console.warn(err)
             )
             navigate('/travaux');
-        }
+        
     }
     return(
         <form className="form_facture secondColor light" onSubmit={create_client}>

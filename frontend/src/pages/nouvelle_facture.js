@@ -401,7 +401,7 @@ const Nouvelle_facture = () => {
           Adresse : {selectedAdresseClient}
         </span>
         </div>
-        <label>Description : </label>
+        <label>Remarques : </label>
         <textarea
           rows={10}
           cols={40}
@@ -592,7 +592,7 @@ const Nouvelle_facture = () => {
                 <p>{selectedClient.pays}</p>
               </div>)}
           <div style={{border:"3px solid black", padding:"5px 5px 300px 5px", borderRadius:"10px", }}>
-            <p>Descriptif :</p>
+            <p>Remarques :</p>
             <pre>{text}</pre>
             <ul>
               {selectedProducts.map((product, index) => (

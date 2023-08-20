@@ -204,7 +204,7 @@ app.post("/facture", (req, res) => {
   )
     client.query(
         "UPDATE facture\
-        SET htva6 = "+req.body.HTVA6 +", htva21 = "+req.body.HTVA21+", description = '"+req.body.descriptif+"', date_limite = '"+req.body.date+"'\
+        SET htva6 = "+req.body.HTVA6 +", htva21 = "+req.body.HTVA21+", description = '"+addBackslashes(req.body.descriptif)+"', date_limite = '"+req.body.date+"'\
         WHERE pk_facture_id = "+ req.body.id, (err, response) => {
             console.log(err)
         }
@@ -278,7 +278,6 @@ app.get('/agenda', (req, res) => {
 })
 
 app.post('/activite', (req, res) => {
-  console.log(req.body)
     let str_request = "INSERT INTO public.agenda (\
         nom, date" 
     let str_values = ") VALUES ($1,$2"
@@ -483,12 +482,12 @@ app.get('/todo', async (req, res) => {
   app.post('/devis', (req, res) => {
     let produits = req.body.produits
     const createDevisQuery = `
-      INSERT INTO public.devis (prix_total, fk_commande_id, devis_numero, annee, date_creation)
-      VALUES ($1, $2, $3 ,$4, $5)
+      INSERT INTO public.devis (prix_total, fk_commande_id, devis_numero, annee, date_creation, description)
+      VALUES ($1, $2, $3 ,$4, $5, $6)
       RETURNING pk_devis_id;
     `;
   
-    const devisValues = [req.body.prix_total, req.body.fk_commande_id, req.body.devis_numero, new Date().getFullYear(), new Date()];
+    const devisValues = [req.body.prix_total, req.body.fk_commande_id, req.body.devis_numero, new Date().getFullYear(), new Date(), addBackslashes(req.body.description)];
   
     client.query(createDevisQuery, devisValues, (devisError, devisResult) => {
       if (devisError) {

@@ -264,7 +264,7 @@ const Facture_devis = () => {
         <label>
           Date limite de paiement :<input type="date" onChange={(e) => setLimitDate(e.target.value)} required></input>
         </label>
-        <label>Description : </label>
+        <label>Remarques : </label>
         <textarea
           rows={10}
           cols={40}
@@ -378,7 +378,7 @@ const Facture_devis = () => {
             </div>
           </div>
           <div>
-            <p>Descriptif :</p>
+            <p>Remarques :</p>
             <pre>{text}</pre>
             <div>
                 <table>

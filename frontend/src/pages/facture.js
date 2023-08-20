@@ -255,7 +255,7 @@ const Facture = () => {
                     Adresse : {selectedAdresseClient}
                 </span>
               </div>
-              <label>Description : </label>
+              <label>Remarques : </label>
               <textarea
                 rows={10}
                 cols={40}
@@ -448,7 +448,7 @@ const Facture = () => {
                 </div>
               </div>
               <div className="apercu_descriptif">
-                <p>Descriptif :</p>
+                <p>Remarques :</p>
                 <pre>{text}</pre>
                 <ul>
                   {selectedProducts.map((product, index) => (

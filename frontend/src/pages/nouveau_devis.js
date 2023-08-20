@@ -28,7 +28,11 @@ const NouveauDevis = () => {
   const [showMailModal, setShowMailModal] = useState(false);
   const [subject, setSubject] = useState("Devis");
   const [message, setMessage] = useState("Madame, Monsieur,\r\nVeuillez trouver en pièce jointe votre devis.\r\nBien cordialement,\r\nStudio éventail.");
+  const [text, setText] = useState('');
 
+  const handleTextareaChange = (event) => {
+    setText(event.target.value);
+  };
   useEffect(()=>{
     setCurrentPage(1)
   }, [searchTerm])
@@ -99,7 +103,8 @@ const NouveauDevis = () => {
       "prix_total": calculateTotalPrice(),
       "fk_commande_id":selectedClient.pk_commande_id,
       "devis_numero":selectedDevisNumero,
-      "produits":selectedProducts
+      "produits":selectedProducts,
+      "descripiton":text,
     }
     axios.post("https://studio-eventail.be:3001/devis", jsonToSend).catch(
       err => console.warn(err)
@@ -279,9 +284,14 @@ const NouveauDevis = () => {
             <span>Client choisi: {selectedClient.nom_societe}</span>
           </div>
         )}
-{/*         <label>Description :</label>
-        <textarea/>
- */}        <div className="produits_detail">
+        <label>Description : </label>
+        <textarea
+          rows={10}
+          cols={40}
+          value={text}
+          onChange={handleTextareaChange}
+        />        
+        <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
             <ul>
               {selectedProducts.map((product, index) => (
@@ -365,7 +375,8 @@ const NouveauDevis = () => {
                 <p>{selectedClient.pays}</p>
               </div>)}
             </div>
-
+            <p>Remarques :</p>
+            <pre>{text}</pre>
             <div className="produits_detail">
             <h3>Récapitulatif des produits :</h3>
             <ul>

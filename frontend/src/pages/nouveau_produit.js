@@ -11,11 +11,7 @@ const NouveauProduit = () => {
 
     function create_produit(e){
         e.preventDefault()
-        if(nom.indexOf("'") !== -1 || nom.indexOf('"') !== -1){
-            alert("Veuillez saisir un nom de produit sans guillement.");
-            return;
-        }
-        else{
+       
             let jsonToSend = {
                 "nom_produit":nom,
                 "prix":Number(prix),
@@ -25,7 +21,7 @@ const NouveauProduit = () => {
                 err => console.warn(err)
             ) 
             navigate('/produits');
-        }
+        
     }
     const handleImageChange = (event) => {
         setSelectedImage(event.target.files[0]);
