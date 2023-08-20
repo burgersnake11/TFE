@@ -45,8 +45,12 @@ app.use((req, res, next) => {
     next();
 });
 function addBackslashes(inputString) {
+  try {
   const escapedString = inputString.replace(/['"]/g, '\\$&');
   return escapedString;
+  } catch (error) {
+  return inputString;
+  }
 }
 //app.set('trust proxy', 1);
 
