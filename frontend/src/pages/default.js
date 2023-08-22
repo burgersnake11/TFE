@@ -35,11 +35,6 @@ const Default = ({setIsLoggedIn}) => {
         }
         
     }
-    /* function test(){
-        axios.post("https://studio-eventail.be:3001/test", {"email":"studio.eventail.facture@gmail.com", "password":bcrypt.hashSync("MotDePasseTemporaire", "$2a$10$sZk/IsTrgMV.iO0dRgU/xu")}).then(res => {
-            console.log(res)
-        })
-    } */
     
     return (
         <div id="connection" className='secondColor light' style={{
