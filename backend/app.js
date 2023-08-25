@@ -705,7 +705,7 @@ app.post('/mail_facture', upload.single('pdf'), async (req, res) => {
       service: 'SendGrid',
       auth: {
         user: 'apikey',
-        pass: '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',
+        pass: '',
       },
     });
     const emailContent = `
