@@ -103,7 +103,7 @@ app.post('/nouvelle_facture', (req, res) => {
 
   client.query(
       "INSERT INTO public.facture (\
-          facture_numero, description, fk_status_id, date_limite, fk_commande_id, fk_type_id, htva6, htva21, annee) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)\
+          facture_numero, description, fk_status_id, date_limite, fk_commande_id, fk_type_id, htva6, htva21, annee) SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9\
             WHERE NOT EXISTS (SELECT 1 FROM public.facture WHERE facture_numero = $1)\
             returning pk_facture_id;",[req.body.numeroFacture, addBackslashes(req.body.descriptif),1, req.body.date_limite, req.body.fk_commande_id,1, req.body.HTVA6, req.body.HTVA21, new Date().getFullYear()],(err, response) => {
               if(err){
@@ -159,7 +159,7 @@ app.post("/nouveau_client", (req, res) => {
 
             client.query(
                 "INSERT INTO public.client (\
-                nom_societe, nom, prenom, gsm, fixe, email, rue, numero, status, fk_commune_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)\
+                nom_societe, nom, prenom, gsm, fixe, email, rue, numero, status, fk_commune_id) SELECT $1,$2,$3,$4,$5,$6,$7,$8,$9,$10\
                 WHERE NOT EXISTS (SELECT 1 FROM public.client WHERE email = $6)\
                 returning pk_client_id;",[addBackslashes(req.body.nom_societe), addBackslashes(req.body.nom), addBackslashes(req.body.prenom), req.body.gsm, req.body.fixe, req.body.email, addBackslashes(req.body.rue), req.body.numero, 'test', id], (err, response)=>{
                     console.log(err)
@@ -172,7 +172,7 @@ app.post("/nouveau_client", (req, res) => {
 app.post("/nouvelle_commande", (req, res) => {
   client.query( 
       "INSERT INTO public.commande (\
-      fk_client_id, nom_commande) VALUES($1,$2)\
+      fk_client_id, nom_commande) SELECT $1,$2\
       WHERE NOT EXISTS (SELECT 1 FROM public.commande WHERE nom_commande = $2)", [req.body.id, addBackslashes(req.body.nom_commande)], (err, response)=>{
           console.log(err)
       }
@@ -269,7 +269,7 @@ app.get('/produits', (req, res) => {
 
 app.post('/produits', (req, res) => {
   client.query(
-    `INSERT INTO public.produits (nom_produit, prix, tva) VALUES ($1, $2, $3)\
+    `INSERT INTO public.produits (nom_produit, prix, tva) SELECT $1, $2, $3\
     WHERE NOT EXISTS (SELECT 1 FROM public.produits WHERE nom_produit = $1)`,
     [addBackslashes(req.body.nom_produit), req.body.prix, req.body.TVA], (err, response) => {
       console.log(err)
@@ -492,7 +492,7 @@ app.get('/todo', async (req, res) => {
     let produits = req.body.produits
     const createDevisQuery = `
       INSERT INTO public.devis (prix_total, fk_commande_id, devis_numero, annee, date_creation, description)
-      VALUES ($1, $2, $3 ,$4, $5, $6)
+      SELECT $1, $2, $3 ,$4, $5, $6
       WHERE NOT EXISTS (SELECT 1 FROM public.devis WHERE devis_numero = $3)
       RETURNING pk_devis_id;
     `;
