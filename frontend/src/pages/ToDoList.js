@@ -15,7 +15,7 @@ const TodoList = () => {
   useEffect(() => {
     let id_principales = []
     let id_secondaires = []
-    axios.get("https://studio-eventail.be:3001/todo", { withCredentials: true }, { params: { "commande_id": commandNumber } }).then((res) => {
+    axios.get("https://studio-eventail.be:3001/todo", { params: { "commande_id": commandNumber }, withCredentials: true  }).then((res) => {
       res.data.forEach(tache => {
         id_principales.push(tache.pk_tache_principale_id)
         tache.subTasks.forEach(sous_tache => {
