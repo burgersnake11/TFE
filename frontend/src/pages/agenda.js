@@ -57,9 +57,9 @@ const Agenda = () => {
   useEffect(() => {
     const monthNumber = String(currentDate.getMonth() + 1).padStart(2, "0"); // Obtenir le numéro du mois en deux chiffres (07 pour juillet)
     let taches = []
-    axios.get("https://studio-eventail.be:3001/agenda", { params: { mois: monthNumber } }).then((res) => {
+    axios.get("https://studio-eventail.be:3001/agenda", { withCredentials: true }, { params: { mois: monthNumber } }).then((res) => {
       taches = res.data;
-      axios.get("https://studio-eventail.be:3001/taches", { params: { mois: monthNumber } }).then((res2) => {
+      axios.get("https://studio-eventail.be:3001/taches", { withCredentials: true }, { params: { mois: monthNumber } }).then((res2) => {
         res2.data.forEach((tache)=>{
           taches.push(tache)
         })
@@ -86,9 +86,9 @@ const Agenda = () => {
 
     // Effectuer une nouvelle requête axios avec le mois précédent
     const prevMonthNumber = String(currentDate.getMonth()).padStart(2, "0"); // Obtenir le numéro du mois précédent en deux chiffres
-    axios.get("https://studio-eventail.be:3001/agenda", { params: { mois: prevMonthNumber } }).then((res) => {
+    axios.get("https://studio-eventail.be:3001/agenda", { withCredentials: true }, { params: { mois: prevMonthNumber } }).then((res) => {
       let taches = res.data;
-      axios.get("https://studio-eventail.be:3001/taches", { params: { mois: prevMonthNumber } }).then((res2) => {
+      axios.get("https://studio-eventail.be:3001/taches", { withCredentials: true }, { params: { mois: prevMonthNumber } }).then((res2) => {
         res2.data.forEach((tache)=>{
           taches.push(tache)
         })
@@ -110,9 +110,9 @@ const Agenda = () => {
 
     // Effectuer une nouvelle requête axios avec le mois suivant
     const nextMonthNumber = String(currentDate.getMonth() + 2).padStart(2, "0"); // Obtenir le numéro du mois suivant en deux chiffres
-    axios.get("https://studio-eventail.be:3001/agenda", { params: { mois: nextMonthNumber } }).then((res) => {
+    axios.get("https://studio-eventail.be:3001/agenda", { withCredentials: true }, { params: { mois: nextMonthNumber } }).then((res) => {
       let taches = res.data;
-      axios.get("https://studio-eventail.be:3001/taches", { params: { mois: nextMonthNumber } }).then((res2) => {
+      axios.get("https://studio-eventail.be:3001/taches", { withCredentials: true }, { params: { mois: nextMonthNumber } }).then((res2) => {
         res2.data.forEach((tache)=>{
           taches.push(tache)
         })

@@ -13,7 +13,7 @@ const DetailProduit = () => {
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
 
     useEffect(() => {
-        axios.get("https://studio-eventail.be:3001/produit", {params : {"id":id}}).then( res => {
+        axios.get("https://studio-eventail.be:3001/produit", { withCredentials: true }, {params : {"id":id}}).then( res => {
             setNom(res.data.rows[0].nom_produit)
             setPrix(res.data.rows[0].prix)
             setTVA(res.data.rows[0].tva)    

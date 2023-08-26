@@ -38,10 +38,10 @@ const Facture_devis = () => {
       setText(event.target.value);
     };
     useEffect(() => {
-      axios.get("https://studio-eventail.be:3001/facture_numero").then((res) => {
+      axios.get("https://studio-eventail.be:3001/facture_numero", { withCredentials: true }).then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("https://studio-eventail.be:3001/devis").then((res) => {
+      axios.get("https://studio-eventail.be:3001/devis", { withCredentials: true }).then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -71,7 +71,7 @@ const Facture_devis = () => {
     }
     
     function handleClientSelection(selectedClient) {
-        axios.get("https://studio-eventail.be:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
+        axios.get("https://studio-eventail.be:3001/detail_devis", { withCredentials: true }, {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
             setDevis(res.data)
             setProduits(res.data.produits)
             let prehtva6=0

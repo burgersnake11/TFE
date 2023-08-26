@@ -31,7 +31,7 @@ const HistoriqueDevis = () => {
   }, [searchTerm, devis]);
     
   useEffect(() => {
-    axios.get('https://studio-eventail.be:3001/devis').then((res) => {
+    axios.get('https://studio-eventail.be:3001/devis', { withCredentials: true }).then((res) => {
       setDevis(res.data);
     });
   }, []);
