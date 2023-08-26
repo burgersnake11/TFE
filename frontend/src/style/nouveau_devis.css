@@ -38,6 +38,7 @@
     font-size: 10px;
     position: relative;
     left: 10%;
+    background-image: url("./facture.jpg")
 }
 
 /* Styles pour la partie supérieure de l'aperçu */
