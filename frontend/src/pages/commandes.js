@@ -34,7 +34,7 @@ const Commandes = () => {
   }, [searchTerm, commandes]);
 
   useEffect(() => {
-    axios.get('https://studio-eventail.be:3001/commandes').then((res) => {
+    axios.get('https://studio-eventail.be:3001/commandes', { withCredentials: true }).then((res) => {
       setCommandes(res.data);
     });
   }, []);

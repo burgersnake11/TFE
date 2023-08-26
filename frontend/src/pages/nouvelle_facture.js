@@ -60,10 +60,10 @@ const Nouvelle_facture = () => {
     }, [searchTerm2, produits]);
 
     useEffect(() => {
-      axios.get("https://studio-eventail.be:3001/facture_numero").then((res) => {
+      axios.get("https://studio-eventail.be:3001/facture_numero", { withCredentials: true }).then((res) => {
         setNumeroFacture(res.data.rows[0].max+1)
     })
-      axios.get("https://studio-eventail.be:3001/commandes").then((res) => {
+      axios.get("https://studio-eventail.be:3001/commandes", { withCredentials: true }).then((res) => {
         let arrayclient = res.data.map((data) => ({
           id: data.pk_client_id,
           nom_societe: data.nom_societe,
@@ -80,7 +80,7 @@ const Nouvelle_facture = () => {
         }));
         setClient(arrayclient);
       });
-      axios.get("https://studio-eventail.be:3001/produits").then((res) => {
+      axios.get("https://studio-eventail.be:3001/produits", { withCredentials: true }).then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({

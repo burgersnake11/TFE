@@ -45,10 +45,10 @@ const NouveauDevis = () => {
     const now = new Date();
     const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
     setDateCreation(formattedDate);
-    axios.get("https://studio-eventail.be:3001/devis_numero").then((res) => {
+    axios.get("https://studio-eventail.be:3001/devis_numero", { withCredentials: true }).then((res) => {
       setSelectedDevisNumero(res.data.rows[0].max+1)
     })
-    axios.get("https://studio-eventail.be:3001/produits").then((res) => {
+    axios.get("https://studio-eventail.be:3001/produits", { withCredentials: true }).then((res) => {
       let nom_produit = [];
       for (let i = 0; i < res.data.length; i += 1) {
         nom_produit.push({
@@ -59,7 +59,7 @@ const NouveauDevis = () => {
       }
       setProduits(nom_produit);
     });
-    axios.get("https://studio-eventail.be:3001/commandes").then((res) => {
+    axios.get("https://studio-eventail.be:3001/commandes", { withCredentials: true }).then((res) => {
       let arrayclient = res.data.map((data) => ({
         id: data.pk_client_id,
         nom_societe: data.nom_societe,

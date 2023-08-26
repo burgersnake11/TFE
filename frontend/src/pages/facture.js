@@ -42,7 +42,7 @@ const Facture = () => {
     };
 
     useEffect(() => {
-        axios.get("https://studio-eventail.be:3001/facture", {params : {"id":id}}).then(res => {
+        axios.get("https://studio-eventail.be:3001/facture", { withCredentials: true }, {params : {"id":id}}).then(res => {
             setSelectedClient(res.data)
             setNumeroFacture(res.data.facture_numero)
             setSelectedAdresseClient(res.data.pays + " " + res.data.numero + " " + res.data.rue + " " + res.data.code_postal + " " + res.data.nom)
@@ -73,7 +73,7 @@ const Facture = () => {
             setDataLoaded(true); // Marquer les données comme chargées
             setSelectedProducts(res.data.produits)
           })
-        axios.get("https://studio-eventail.be:3001/produits").then((res) => {
+        axios.get("https://studio-eventail.be:3001/produits", { withCredentials: true }).then((res) => {
           let nom_produit = [];
           for (let i = 0; i < res.data.length; i += 1) {
             nom_produit.push({

@@ -17,7 +17,7 @@ const Clients = () => {
   }, [searchTerm])
   
   useEffect(() => {
-    axios.get('https://studio-eventail.be:3001/clients').then((res) => {
+    axios.get('https://studio-eventail.be:3001/clients', { withCredentials: true }).then((res) => {
       setClients(res.data);
     });
   }, []);
