@@ -42,7 +42,7 @@ const Facture = () => {
     };
 
     useEffect(() => {
-        axios.get("https://studio-eventail.be:3001/facture", { withCredentials: true }, {params : {"id":id}}).then(res => {
+        axios.get("https://studio-eventail.be:3001/facture",{params : {"id":id} , withCredentials: true }).then(res => {
             setSelectedClient(res.data)
             setNumeroFacture(res.data.facture_numero)
             setSelectedAdresseClient(res.data.pays + " " + res.data.numero + " " + res.data.rue + " " + res.data.code_postal + " " + res.data.nom)

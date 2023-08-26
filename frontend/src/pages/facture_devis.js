@@ -71,7 +71,7 @@ const Facture_devis = () => {
     }
     
     function handleClientSelection(selectedClient) {
-        axios.get("https://studio-eventail.be:3001/detail_devis", { withCredentials: true }, {params : {"id": selectedClient.pk_devis_id}}).then((res) => {
+        axios.get("https://studio-eventail.be:3001/detail_devis", {params : {"id": selectedClient.pk_devis_id}, withCredentials: true }).then((res) => {
             setDevis(res.data)
             setProduits(res.data.produits)
             let prehtva6=0

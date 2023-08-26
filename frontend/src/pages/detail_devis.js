@@ -36,7 +36,7 @@ const NouveauDevis = () => {
   };
   useEffect(() => {
     
-    axios.get("https://studio-eventail.be:3001/detail_devis", { withCredentials: true }, {params : {"id":id}}).then( res => {
+    axios.get("https://studio-eventail.be:3001/detail_devis", {params : {"id":id}, withCredentials: true }).then( res => {
         const now = new Date(res.data.date_creation)
         const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`; 
         setDateCreation(formattedDate);

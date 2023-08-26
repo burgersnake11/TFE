@@ -22,7 +22,7 @@ const DetailClient = () => {
     const [dataLoaded, setDataLoaded] = useState(false); // Nouvel état pour le chargement des données
 
     useEffect(() => {
-        axios.get("https://studio-eventail.be:3001/client", { withCredentials: true }, {params : {"id":id}}).then( res => {
+        axios.get("https://studio-eventail.be:3001/client",{params : {"id":id}, withCredentials: true }).then( res => {
             setNomSociete(res.data.rows[0].nom_societe)
             setRue(res.data.rows[0].rue)
             setNumero(res.data.rows[0].numero)
