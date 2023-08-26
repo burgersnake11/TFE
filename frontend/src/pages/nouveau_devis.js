@@ -63,7 +63,7 @@ const NouveauDevis = () => {
       let arrayclient = res.data.map((data) => ({
         id: data.pk_client_id,
         nom_societe: data.nom_societe,
-        nom_commune: data.nom,
+        nom_commune: data.nom_commune,
         code_postal: data.code_postal,
         pays: data.pays,
         region: data.region,

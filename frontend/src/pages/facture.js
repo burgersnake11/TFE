@@ -70,9 +70,12 @@ const Facture = () => {
               setTotal(Math.round((Number(res.data.htva21) + Number(res.data.htva21) * 0.21)*100)/100)
             }
             
-            setDataLoaded(true); // Marquer les données comme chargées
+            // Marquer les données comme chargées
             setSelectedProducts(res.data.produits)
-          })
+            setDataLoaded(true);         
+	    console.log(res.data.produits)
+	    console.log(res.data)
+	 })
         axios.get("https://studio-eventail.be:3001/produits", { withCredentials: true }).then((res) => {
           let nom_produit = [];
           for (let i = 0; i < res.data.length; i += 1) {

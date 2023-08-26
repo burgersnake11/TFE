@@ -10,7 +10,7 @@ const NouveauClient = () => {
     const [numero, setNumero] = useState(0)
     const [codePostal, setCodePostal] = useState(0)
     const [commune, setCommune] = useState("")
-    const [pays, setPays] = useState("")
+    const [pays, setPays] = useState("Belgique")
     const [nomClient, setNomClient] = useState("")
     const [prenomClient, setPrenomClient] = useState("")
     const [gsm, setGsm] = useState(0)

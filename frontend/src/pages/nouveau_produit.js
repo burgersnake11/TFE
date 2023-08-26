@@ -38,8 +38,8 @@ const NouveauProduit = () => {
             <label>TVA (en pourcentage):</label>
             <br/>
             <select onChange={(e) => setTVA(e.target.value)}>
-                <option value={6}>6%</option>
                 <option value={21}>21%</option>
+                <option value={6}>6%</option>
             </select>
             <br/>
             <label>Prix : </label>

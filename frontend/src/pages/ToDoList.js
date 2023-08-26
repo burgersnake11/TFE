@@ -112,7 +112,7 @@ const TodoList = () => {
   };
 
   return (
-    <div className="todo-list dark">
+    <div className="todo-list dark" style={{backgroundColor:"#D9D9D9"}}>
       <h2>To Do List pour le travail "{nom_commande}" pour le client "{client}"</h2>
       <button className="button-todo bouton light" onClick={handleAddTask}>Ajouter une tâche</button>
       <div className="tasks-container">
